@@ -1,9 +1,9 @@
 {
   "name": "@learnersguild/command-parser",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Option parser for Learners Guild commands.",
   "scripts": {
-    "build": "babel -d lib/ src/ --ignore src/__tests__",
+    "build": "babel -d lib/ src/ --ignore __tests__",
     "prepublish": "npm test && npm run build",
     "2npm": "./node_modules/.bin/publish",
     "lint": "./node_modules/.bin/xo",
