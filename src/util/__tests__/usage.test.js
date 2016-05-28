@@ -111,22 +111,22 @@ describe(testContext(__filename), function () {
     })
   })
 
-  describe('usage (passing parsed args)', function () {
+  describe('usage {includeHelp: true}', function () {
     it('returns nothing if no help was requested', function () {
       const args = {_: [], help: false}
-      const usageString = usage(this.commandDescriptor, args)
+      const usageString = usage(this.commandDescriptor, args, {includeHelp: true})
       expect(usageString).to.not.be.ok
     })
 
     it('returns the parent command usage when "--help" was requested on parent command', function () {
       const args = {_: [], help: true}
-      const usageString = usage(this.commandDescriptor, args)
+      const usageString = usage(this.commandDescriptor, args, {includeHelp: true})
       expect(usageString).to.match(/^cmd -/)
     })
 
     it('returns the subcommand usage when "--help" was reqested on subcommand', function () {
       const args = {_: ['cmd1'], subcommand: {cmd1: {_: [], help: true}}}
-      const usageString = usage(this.commandDescriptor, args)
+      const usageString = usage(this.commandDescriptor, args, {includeHelp: true})
       expect(usageString).to.match(/^cmd cmd1 -/)
     })
   })

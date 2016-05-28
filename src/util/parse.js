@@ -1,6 +1,8 @@
 import parseArgs from 'minimist'
 
+import addHelpOption from './addHelpOption'
 import findSubcommandDescriptor from './findSubcommandDescriptor'
+import {DEFAULT_OPTIONS} from './index'
 
 function getParseOptions(commandDescriptor) {
   const options = {
@@ -41,7 +43,8 @@ function getParseOptions(commandDescriptor) {
   return options
 }
 
-export default function parse(commandDescriptor, argv) {
+export default function parse(cd, argv, options = DEFAULT_OPTIONS) {
+  const commandDescriptor = options.includeHelp ? addHelpOption(cd) : cd
   const parseOptions = getParseOptions(commandDescriptor)
   let args = parseArgs(argv, parseOptions)
 
