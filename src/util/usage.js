@@ -25,7 +25,7 @@ export function commandList(commands) {
   const commandDescs = commands.map(cmd => (
     sprintf(`    %-${maxCommandWidth}s - %s`, cmd.name, cmd.description)
   ))
-  return `\nCommands:\n${commandDescs.join('\n')}`
+  return `\nCommands:\n${commandDescs.join('\n')}\n`
 }
 
 export function optionList(options) {
@@ -34,7 +34,7 @@ export function optionList(options) {
   }
 
   const cliOpts = cliclopts(options)
-  return `\nOptions:\n${cliOpts.usage()}`
+  return `Options:\n${cliOpts.usage()}`
 }
 
 function commandDescriptorIncludesDefaultHelp(commandDescriptor) {
