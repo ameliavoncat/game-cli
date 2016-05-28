@@ -19,7 +19,7 @@ Read the [instructions for contributing](./CONTRIBUTING.md).
 
 1. Install the module in your project
 
-      $ npm install --save @learnersguild/command-parser
+        $ npm install --save @learnersguild/command-parser
 
 2. Use whichever command modules you want by importing them
 
