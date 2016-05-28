@@ -7,7 +7,7 @@ global.testContext = filename => {
   return filename.slice(1).split('/').reduce((ret, curr) => {
     const currWithoutTests = curr === '__tests__' ? null : `/${curr}`
     const value = ret.useCurr && currWithoutTests ? `${ret.value}${currWithoutTests}` : ret.value
-    const useCurr = ret.useCurr || curr === 'game'
+    const useCurr = ret.useCurr || curr === 'command-parser'
     return {useCurr, value}
   }, {useCurr: false, value: ''}).value.replace('.test.js', '').slice(1)
 }
