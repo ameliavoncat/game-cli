@@ -2,7 +2,7 @@
 /* global expect, testContext */
 /* eslint-disable prefer-arrow-callback, no-unused-expressions */
 
-import usage, {usageInfo, commandList, optionList} from '../usage'
+import usage, {usageInfo, commandList, optionList, usageMessage} from '../usage'
 
 function escapeRegExp(str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&')
@@ -85,9 +85,9 @@ describe(testContext(__filename), function () {
     })
   })
 
-  describe('usage', function () {
+  describe('usageMessage', function () {
     it('returns the full usage for the command', function () {
-      const lines = usage(this.commandDescriptor).split('\n').filter(line => line.length > 0)
+      const lines = usageMessage(this.commandDescriptor).split('\n').filter(line => line.length > 0)
       expect(lines[0]).to.equal(`${this.commandDescriptor.name} - ${this.commandDescriptor.description}`)
       expect(lines.length).to.equal(
         1 +                                            // name + description
@@ -99,8 +99,35 @@ describe(testContext(__filename), function () {
 
     it('uses the command name if no usage info is provided', function () {
       const subcommandDescriptor = this.commandDescriptor.commands[1]
-      const lines = usage(subcommandDescriptor).split('\n').filter(line => line.length > 0)
+      const lines = usageMessage(subcommandDescriptor).split('\n').filter(line => line.length > 0)
       expect(lines[2]).to.match(new RegExp(`\\s+${escapeRegExp(subcommandDescriptor.name)}`))
+    })
+  })
+
+  describe('usage', function () {
+    it('returns the parent command usage when called without parsed arguments', function () {
+      const usageString = usage(this.commandDescriptor)
+      expect(usageString).to.match(/^cmd -/)
+    })
+  })
+
+  describe('usage (passing parsed args)', function () {
+    it('returns nothing if no help was requested', function () {
+      const args = {_: [], help: false}
+      const usageString = usage(this.commandDescriptor, args)
+      expect(usageString).to.not.be.ok
+    })
+
+    it('returns the parent command usage when "--help" was requested on parent command', function () {
+      const args = {_: [], help: true}
+      const usageString = usage(this.commandDescriptor, args)
+      expect(usageString).to.match(/^cmd -/)
+    })
+
+    it('returns the subcommand usage when "--help" was reqested on subcommand', function () {
+      const args = {_: ['cmd1'], subcommand: {cmd1: {_: [], help: true}}}
+      const usageString = usage(this.commandDescriptor, args)
+      expect(usageString).to.match(/^cmd cmd1 -/)
     })
   })
 })

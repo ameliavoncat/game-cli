@@ -60,7 +60,7 @@ describe(testContext(__filename), function () {
       const args = parse(this.commandDescriptor, ['-w', '5min', 'off', '--unplug'])
       expect(args.when).to.equal('5min')
 
-      const subcommandArgs = args.off
+      const subcommandArgs = args.subcommand.off
       expect(subcommandArgs.unplug).to.be.ok
     })
   })

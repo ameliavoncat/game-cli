@@ -53,7 +53,7 @@ export default function parse(commandDescriptor, argv) {
     const subcommandDescriptor = findSubcommandDescriptor(commandDescriptor, subcommand)
     const subcommandParseOptions = getParseOptions(subcommandDescriptor)
     const subcommandArgs = parseArgs(subcommandArgv, subcommandParseOptions)
-    args = Object.assign({}, args, {[subcommand]: subcommandArgs})
+    args = Object.assign({}, args, {subcommand: {[subcommand]: subcommandArgs}})
   }
 
   return args

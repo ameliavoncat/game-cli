@@ -1,6 +1,9 @@
 import cliclopts from 'cliclopts'
 import {sprintf} from 'sprintf-js'
 
+import findSubcommandDescriptor from './findSubcommandDescriptor'
+
+
 export function usageInfo(usage, parentCommand = null) {
   if (!usage) {
     return ''
@@ -33,9 +36,23 @@ export function optionList(options) {
   return `\nOptions:\n${cliOpts.usage()}`
 }
 
-export default function usage(commandDescriptor, parentCommand = null) {
-  return `${commandDescriptor.name} - ${commandDescriptor.description}
+export function usageMessage(commandDescriptor, parentCommand = null) {
+  const fullCommandName = parentCommand ? `${parentCommand} ${commandDescriptor.name}` : commandDescriptor.name
+  return `${fullCommandName} - ${commandDescriptor.description}
 ${usageInfo(commandDescriptor.usage || commandDescriptor.name, parentCommand)}
 ${commandList(commandDescriptor.commands)}
 ${optionList(commandDescriptor.options)}`
+}
+
+export default function usage(commandDescriptor, args = null) {
+  if (!args || args.help) {
+    return usageMessage(commandDescriptor)
+  }
+  if (args.subcommand) {
+    const subcommand = Object.keys(args.subcommand)[0]
+    const subcommandDescriptor = findSubcommandDescriptor(commandDescriptor, subcommand)
+    if (args.subcommand[subcommand].help) {
+      return usageMessage(subcommandDescriptor, commandDescriptor.name)
+    }
+  }
 }
