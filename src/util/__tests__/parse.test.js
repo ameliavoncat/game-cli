@@ -55,5 +55,13 @@ describe(testContext(__filename), function () {
       const args = parse(this.commandDescriptor, ['--delay=5min'])
       expect(args.when).to.equal('5min')
     })
+
+    it('differentiates between command and sub-command options', function () {
+      const args = parse(this.commandDescriptor, ['-w', '5min', 'off', '--unplug'])
+      expect(args.when).to.equal('5min')
+
+      const subcommandArgs = args.off
+      expect(subcommandArgs.unplug).to.be.ok
+    })
   })
 })
