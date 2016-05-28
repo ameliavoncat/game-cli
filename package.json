@@ -1,8 +1,8 @@
 {
   "name": "@learnersguild/command-parser",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Option parser for Learners Guild commands.",
-  "main": "lib/index.js",
+  "main": "lib",
   "scripts": {
     "build": "babel -d lib/ src/ --ignore __tests__",
     "prepublish": "npm test && npm run build",
