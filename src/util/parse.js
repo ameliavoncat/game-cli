@@ -1,5 +1,7 @@
 import parseArgs from 'minimist'
 
+import findSubcommandDescriptor from './findSubcommandDescriptor'
+
 function getParseOptions(commandDescriptor) {
   const options = {
     string: [],
@@ -37,14 +39,6 @@ function getParseOptions(commandDescriptor) {
   })
 
   return options
-}
-
-function findSubcommandDescriptor(commandDescriptor, subcommand) {
-  const subcommandDescriptor = commandDescriptor.commands.filter(cmd => cmd.name === subcommand)[0]
-  if (!subcommandDescriptor) {
-    throw new Error(`FATAL: no such subcommand '${subcommand}'`)
-  }
-  return subcommandDescriptor
 }
 
 export default function parse(commandDescriptor, argv) {
