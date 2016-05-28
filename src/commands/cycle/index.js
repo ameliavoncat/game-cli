@@ -4,13 +4,17 @@ import {
 } from '../../util'
 
 import launch from './launch'
+import retro from './retro'
+import status from './status'
 
-const commandDescriptor = {
+export const commandDescriptor = {
   name: 'cycle',
   description: 'manage cycles',
   usage: 'cycle [options] <command>',
   commands: [
     launch,
+    retro,
+    status,
   ],
   options: [
     {
@@ -31,6 +35,7 @@ export function usage(args = null) {
 }
 
 export default {
+  commandDescriptor,
   parse,
   usage,
 }

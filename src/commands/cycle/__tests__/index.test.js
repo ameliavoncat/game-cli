@@ -2,9 +2,13 @@
 /* global expect, testContext */
 /* eslint-disable prefer-arrow-callback, no-unused-expressions */
 
-import {parse, usage} from '../index'
+import {parse, usage, commandDescriptor} from '../index'
 
 describe(testContext(__filename), function () {
+  before(function () {
+    this.subcommands = commandDescriptor.commands.map(cmd => cmd.name)
+  })
+
   describe('parse', function () {
     it('throws if an unknown option is passed', function () {
       const callParse = () => parse(['-x'])
@@ -18,9 +22,11 @@ describe(testContext(__filename), function () {
       expect(args.help).to.be.ok
     })
 
-    it('detects if launch help was requested', function () {
-      const args = parse(['launch', '--help'])
-      expect(args.subcommand.launch.help).to.be.ok
+    it('detects if subcommand help was requested', function () {
+      this.subcommands.forEach(cmd => {
+        const args = parse([cmd, '--help'])
+        expect(args.subcommand[cmd].help).to.be.ok
+      })
     })
   })
 
@@ -30,9 +36,11 @@ describe(testContext(__filename), function () {
       expect(usage(args)).to.match(/^cycle -/)
     })
 
-    it('returns launch help if requested', function () {
-      const args = parse(['launch', '--help'])
-      expect(usage(args)).to.match(/^cycle launch -/)
+    it('returns subcommand help if requested', function () {
+      this.subcommands.forEach(cmd => {
+        const args = parse([cmd, '--help'])
+        expect(usage(args)).to.match(new RegExp(`^cycle ${cmd} -`))
+      })
     })
   })
 })
