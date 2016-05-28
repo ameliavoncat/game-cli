@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/command-parser",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib/index.js",
   "scripts": {

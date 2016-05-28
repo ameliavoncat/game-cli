@@ -16,3 +16,4 @@ function genCommand(name) {
 }
 
 export const cycle = genCommand('cycle')
+export const vote = genCommand('vote')
