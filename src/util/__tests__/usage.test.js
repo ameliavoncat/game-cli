@@ -17,6 +17,7 @@ describe(testContext(__filename), function () {
       commands: [{
         name: 'cmd1',
         description: 'desc1',
+        usage: 'cmd1 <arg>',
       }, {
         name: 'cmd2',
         description: 'desc2',
@@ -38,6 +39,13 @@ describe(testContext(__filename), function () {
     it('returns empty string if there is no usage', function () {
       expect(usageInfo(undefined)).to.equal('')
       expect(usageInfo(null)).to.equal('')
+    })
+
+    it('concatenates the parent command if it exists', function () {
+      const subcommandDescriptor = this.commandDescriptor.commands[1]
+      const lines = usageInfo(subcommandDescriptor.name, this.commandDescriptor.name).split('\n').filter(line => line.length > 0)
+      expect(lines[0]).to.match(/Usage:/)
+      expect(lines[1]).to.match(new RegExp(`\\s+${escapeRegExp(this.commandDescriptor.name)} ${escapeRegExp(subcommandDescriptor.name)}`))
     })
 
     it('returns the usage info', function () {
@@ -87,6 +95,12 @@ describe(testContext(__filename), function () {
         this.commandDescriptor.commands.length + 1 +   // Commands: and command list
         this.commandDescriptor.options.length + 1      // Options: and option list
       )
+    })
+
+    it('uses the command name if no usage info is provided', function () {
+      const subcommandDescriptor = this.commandDescriptor.commands[1]
+      const lines = usage(subcommandDescriptor).split('\n').filter(line => line.length > 0)
+      expect(lines[2]).to.match(new RegExp(`\\s+${escapeRegExp(subcommandDescriptor.name)}`))
     })
   })
 })

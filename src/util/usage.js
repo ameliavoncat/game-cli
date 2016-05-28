@@ -1,12 +1,13 @@
 import cliclopts from 'cliclopts'
 import {sprintf} from 'sprintf-js'
 
-export function usageInfo(usage) {
+export function usageInfo(usage, parentCommand = null) {
   if (!usage) {
     return ''
   }
+  const usageString = parentCommand ? `${parentCommand} ${usage}` : usage
 
-  return `\nUsage:\n    ${usage}`
+  return `\nUsage:\n    ${usageString}`
 }
 
 export function commandList(commands) {
@@ -32,9 +33,9 @@ export function optionList(options) {
   return `\nOptions:\n${cliOpts.usage()}`
 }
 
-export default function usage(commandDescriptor) {
+export default function usage(commandDescriptor, parentCommand = null) {
   return `${commandDescriptor.name} - ${commandDescriptor.description}
-${usageInfo(commandDescriptor.usage)}
+${usageInfo(commandDescriptor.usage || commandDescriptor.name, parentCommand)}
 ${commandList(commandDescriptor.commands)}
 ${optionList(commandDescriptor.options)}`
 }
