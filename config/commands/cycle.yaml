@@ -1,0 +1,19 @@
+%YAML 1.2
+---
+command:
+  name: cycle
+  description: manage cycles
+  usage: cycle [options] <command>
+  commands:
+    -
+      name: launch
+      description: tally votes and create project teams
+      usage: launch [options]
+    -
+      name: retro
+      description: tally votes and create project teams
+      usage: launch [options]
+    -
+      name: status
+      description: tally votes and create project teams
+      usage: launch [options]

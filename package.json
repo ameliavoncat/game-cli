@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/command-parser",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib/index.js",
   "scripts": {
@@ -29,7 +29,8 @@
   "dependencies": {
     "cliclopts": "^1.1.1",
     "minimist": "^1.2.0",
-    "sprintf-js": "^1.0.3"
+    "sprintf-js": "^1.0.3",
+    "yamljs": "^0.2.7"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
