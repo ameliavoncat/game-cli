@@ -16,14 +16,6 @@ export const commandDescriptor = {
     retro,
     status,
   ],
-  options: [
-    {
-      name: 'help',
-      abbr: 'h',
-      boolean: true,
-      help: 'print usage information',
-    }
-  ]
 }
 
 export function parse(argv) {
