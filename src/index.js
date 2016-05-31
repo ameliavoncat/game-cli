@@ -10,6 +10,7 @@ function genCommand(name) {
   const commandConfigFilename = path.resolve(__dirname, '..', 'config', 'commands', `${name}.yaml`)
   const {command} = yaml.load(commandConfigFilename)
   return {
+    commandDescriptor: command,
     parse: argv => parseFor(command, argv),
     usage: (args = null) => usageFor(command, args),
   }
