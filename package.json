@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/command-parser",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib",
   "scripts": {
@@ -8,7 +8,7 @@
     "prepublish": "npm test && npm run build",
     "2npm": "./node_modules/.bin/publish",
     "lint": "./node_modules/.bin/xo",
-    "test:run": "NODE_ENV=test ./node_modules/.bin/mocha --opts ./config/mocha.opts $(find . -path './**/__tests__/*.test.js' ! -ipath '*node_modules')",
+    "test:run": "NODE_ENV=test ./node_modules/.bin/mocha --opts ./config/mocha.opts $(find . -path './**/__tests__/*.test.js' -not -path '*node_modules*')",
     "test:watch": "npm run test -- --watch",
     "test": "npm run lint && npm run test:run"
   },
@@ -27,9 +27,7 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "cliclopts": "^1.1.1",
-    "minimist": "^1.2.0",
-    "sprintf-js": "^1.0.3",
+    "subcli": "^0.1.0",
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
