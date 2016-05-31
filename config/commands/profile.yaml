@@ -1,0 +1,6 @@
+%YAML 1.2
+---
+command:
+  name: profile
+  description: edit your user profile
+  usage: 'profile [options]'
