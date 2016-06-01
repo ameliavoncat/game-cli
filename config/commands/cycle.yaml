@@ -11,9 +11,9 @@ command:
       usage: launch [options]
     -
       name: retro
-      description: tally votes and create project teams
+      description: initiate retrospective process
       usage: launch [options]
     -
       name: status
-      description: tally votes and create project teams
+      description: display status information for the cycle
       usage: launch [options]
