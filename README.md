@@ -1,6 +1,6 @@
-# command-parser
+# game-cli
 
-Learners Guild command parsing module.
+Learners Guild game command-line interface (CLI).
 
 
 ## Getting Started
@@ -54,26 +54,11 @@ Read the [instructions for contributing](./CONTRIBUTING.md).
 
 ## Notes
 
-It may help to look at [minimist][minimist] for more detail on how the argument parsing is handled. One thing to note is that, our command parsing supports the notion of "sub commands". For example, you may see a result that looks like:
-
-```javascript
-{
-  _: [ 'launch' ],   // positional parameters for the parent command
-  help: false,       // options for the parent command
-  h: false,          // ...
-  subcommand: {
-    launch: {
-      _: [],         // positional parameters for the sub command
-      help: false,   // options for the sub command
-      h: false       // ...
-    }
-  }
-}
-```
+It may help to look at [subcli][subcli] for more detail on how the argument parsing is handled.
 
 ## License
 
 See the [LICENSE](./LICENSE) file.
 
 
-[minimist]: https://github.com/substack/minimist
+[subcli]: https://github.com/LearnersGuild/subcli
