@@ -19,12 +19,12 @@ Read the [instructions for contributing](./CONTRIBUTING.md).
 
 1. Install the module in your project
 
-        $ npm install --save @learnersguild/command-parser
+        $ npm install --save @learnersguild/game-cli
 
 2. Use whichever command modules you want by importing them
 
       ```javascript
-      import {cycle, vote} from '@learnersguild/command-parser'
+      import {cycle, vote} from '@learnersguild/game-cli'
 
       let usage = vote.usage()
       // <the full usage text for the vote command>
