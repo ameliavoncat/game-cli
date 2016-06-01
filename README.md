@@ -14,6 +14,20 @@ Read the [instructions for contributing](./CONTRIBUTING.md).
         $ npm install
         $ npm test
 
+### How to Define New Commands
+
+All of the existing top-level commands are defined in the [config/commands](config/commands) folder, one `.yaml` file per command. To add a new command, simply create a `.yaml` file with the name of the command. Each command and subcommand supports the following attributes:
+
+- `name` primary name of option
+- `abbr` one character alias of the option
+- `alias` other options treated as alias
+- `boolean` if `true`, the option is seen as a boolean flag
+- `help` usage string for the option
+- `default` default value of the option
+- `commands` nested subcommands, which also support this same list of attributes
+- `_inactive` if `true`, the command or subcommand will be ignored
+
+It's worth noting that the attributes are an extension of [cliclopts][cliclopts].
 
 ## How to Use
 
@@ -62,3 +76,4 @@ See the [LICENSE](./LICENSE) file.
 
 
 [subcli]: https://github.com/LearnersGuild/subcli
+[cliclopts]: https://github.com/finnp/cliclopts

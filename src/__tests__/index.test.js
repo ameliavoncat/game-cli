@@ -2,7 +2,7 @@
 /* global expect, testContext */
 /* eslint-disable prefer-arrow-callback, no-unused-expressions */
 
-import * as commands from '../index'
+import {default as commands} from '../index'
 
 describe(testContext(__filename), function () {
   describe('imports and exports', function () {
