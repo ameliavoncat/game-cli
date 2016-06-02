@@ -13,10 +13,17 @@ function loadCommandDescriptor(commandConfigFilename) {
 }
 
 function genCommand(commandDescriptor) {
+  let invoke
+  try {
+    invoke = require(`./commands/${commandDescriptor.name}`).invoke
+  } catch (error) {
+    invoke = undefined
+  }
   return {
     commandDescriptor,
     parse: argv => parseFor(commandDescriptor, argv),
     usage: (args = null) => usageFor(commandDescriptor, args),
+    invoke,
   }
 }
 
@@ -44,6 +51,7 @@ function genCommandMap() {
   const commandDescriptors = commandConfigFilenames.map(filename => loadCommandDescriptor(filename))
   return filterOutInactiveCommandDescriptors(commandDescriptors)
     .map(commandDescriptor => genCommand(commandDescriptor))
+    .filter(command => typeof command.invoke === 'function')  // ensure that there's an implementation
     .reduce((commandMap, command) => {
       commandMap[command.commandDescriptor.name] = command
       return commandMap
