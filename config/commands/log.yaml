@@ -3,14 +3,9 @@
 command:
   name: log
   description: Log reflections.
-  usage: log [<command> | -r<num> <...reflection>]
-  commands:
-    -
-      name: retro
-      description: Show list of retrospective questions for reflection.
-      usage: retro [options]
+  usage: log [-r | -r<num> <...reflection>]
   options:
     -
       name: reflection
       abbr: r
-      help: Specify the number of the reflection being logged. Use `log retro` to see the list of questions.
+      help: Without a number argument, show list of retrospective questions for reflection. With a number, log a reflection for the question corresponding to the number.
