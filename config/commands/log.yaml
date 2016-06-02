@@ -2,15 +2,15 @@
 ---
 command:
   name: log
-  description: log reflections
+  description: Log reflections.
   usage: log [<command> | -r<num> <...reflection>]
   commands:
     -
       name: retro
-      description: begin retrospective process
+      description: Show list of retrospective questions for reflection.
       usage: retro [options]
   options:
     -
       name: reflection
       abbr: r
-      help: the number of the reflection being logged
+      help: Specify the number of the reflection being logged. Use `log retro` to see the list of questions.
