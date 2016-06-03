@@ -66,7 +66,6 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgUser} = this
       return this.invoke(['retro'], this.notify, {lgJWT, lgUser})
         .then(() => {
-          console.log(this.notifications[1])
           expect(this.notifications[1]).to.match(/API invocation failed/)
           done()
         })
