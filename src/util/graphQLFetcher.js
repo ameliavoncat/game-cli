@@ -21,7 +21,7 @@ export default function graphQLFetcher(lgJWT, baseURL, origin = APP_BASEURL) {
         'Content-Type': 'application/json',
         'LearnersGuild-Skip-Update-User-Middleware': 1,
       },
-      body: graphQLParams,
+      body: JSON.stringify(graphQLParams),
     }
 
     return fetch(`${baseURL}/graphql`, options)
