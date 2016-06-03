@@ -8,4 +8,14 @@ command:
     -
       name: reflection
       abbr: r
-      help: Without a number argument, show list of retrospective questions for reflection. With a number, log a reflection for the question corresponding to the number.
+      help: Without a number argument, show list of retrospective questions for reflection. Provide a number to show the reflection question, and to log a reflection for the question.
+  examples:
+    -
+      example: log -r
+      description: Show retrospective status and questions.
+    -
+      example: log -r2
+      description: Show retrospective question number 2.
+    -
+      example: log -r2 "So far so good"
+      description: Answer retrospective question 2 with a reflection message.
