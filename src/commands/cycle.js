@@ -50,18 +50,20 @@ export function invoke(argv, notify, options = {}) {
   try {
     args = parse(argv)
   } catch (error) {
-    return notify(formatError(error))
+    notify(formatError(error))
+    return
   }
   const usageText = usage(args)
   if (usageText) {
     notify(formatUsage(usageText))
+    return
   } else if (args._.length === 1) {
     const subcommandFuncs = {
       launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, opts),
       retro: () => handleUpdateCycleStateCommand('RETROSPECTIVE', '🤔  Initiating Retrospective... stand by.', notify, opts),
     }
     return subcommandFuncs[args._[0]]()
-  } else {
-    notify(formatUsage(usage()))
   }
+
+  notify(formatUsage(usage()))
 }

@@ -63,14 +63,16 @@ export function invoke(argv, notify, options = {}) {
   try {
     args = parse(argv)
   } catch (error) {
-    return notify(formatError(error))
+    notify(formatError(error))
+    return
   }
   const usageText = usage(args)
   if (usageText) {
     notify(formatUsage(usageText))
+    return
   } else if (args._.length > 0) {
     return voteForGoals(args._, notify, opts)
-  } else {
-    notify(formatMessage('Loading current cycle voting results ...'))
   }
+
+  notify(formatMessage('Loading current cycle voting results ...'))
 }

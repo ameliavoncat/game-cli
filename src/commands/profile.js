@@ -21,9 +21,11 @@ export function invoke(argv, notify, options = {}) {
   const usageText = usage(args)
   if (usageText) {
     notify(formatUsage(usageText))
+    return
   } else if (args._.length > 0) {
     notify(formatUsage(usage()))
-  } else {
-    notify(formatMessage('Loading your profile ...'))
+    return
   }
+
+  notify(formatMessage('Loading your profile ...'))
 }
