@@ -2,7 +2,7 @@
 ---
 command:
   name: log
-  description: Log reflections.
+  description: log reflections
   usage: log [-r | -r<num> <...reflection>]
   options:
     -
