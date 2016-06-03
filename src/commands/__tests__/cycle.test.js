@@ -45,7 +45,7 @@ describe(testContext(__filename), function () {
     })
 
     it('does not notify if the API invocation succeeds', function (done) {
-      nock('https://game.learnersguild.org')
+      nock('https://game.learnersguild.test')
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
@@ -59,7 +59,7 @@ describe(testContext(__filename), function () {
     })
 
     it('notifies of API invocation errors', function (done) {
-      nock('https://game.learnersguild.org')
+      nock('https://game.learnersguild.test')
         .post('/graphql')
         .reply(500, 'Internal Server Error')
 

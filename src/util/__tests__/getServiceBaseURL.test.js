@@ -14,12 +14,14 @@ describe(testContext(__filename), function () {
   })
 
   it('returns the .dev service when in development', function () {
-    process.env.NODE_ENV = 'development'
-    expect(getServiceBaseURL(IDM)).to.equal('http://idm.learnersguild.dev')
+    expect(getServiceBaseURL(IDM, 'development')).to.equal('http://idm.learnersguild.dev')
   })
 
-  it('returns the .org service when not in development', function () {
-    process.env.NODE_ENV = 'production'
-    expect(getServiceBaseURL(GAME)).to.equal('https://game.learnersguild.org')
+  it('returns the .org service when in production', function () {
+    expect(getServiceBaseURL(GAME, 'test')).to.equal('https://game.learnersguild.test')
+  })
+
+  it('returns the .org service when in production', function () {
+    expect(getServiceBaseURL(GAME, 'production')).to.equal('https://game.learnersguild.org')
   })
 })
