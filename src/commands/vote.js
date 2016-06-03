@@ -1,9 +1,8 @@
 import loadCommand from '../util/loadCommand'
 import errorReporter from '../util/errorReporter'
-import assertFunctions from '../util/assertFunctions'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
-import defaultInvokeOptions from '../util/defaultInvokeOptions'
+import parseArgvAndInvoke from '../util/parseArgvAndInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('vote')
 
@@ -51,28 +50,13 @@ function voteForGoals(goalDescriptors, notify, options) {
   }
 }
 
-export function invoke(argv, notify, options = {}) {
-  const opts = Object.assign({}, defaultInvokeOptions, options)
+export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) => {
   const {
     formatMessage,
-    formatError,
-    formatUsage
-  } = opts
-  assertFunctions({notify, formatMessage, formatError, formatUsage})
-  let args
-  try {
-    args = parse(argv)
-  } catch (error) {
-    notify(formatError(error))
-    return
-  }
-  const usageText = usage(args)
-  if (usageText) {
-    notify(formatUsage(usageText))
-    return
-  } else if (args._.length > 0) {
-    return voteForGoals(args._, notify, opts)
+  } = options
+  if (args._.length > 0) {
+    return voteForGoals(args._, notify, options)
   }
 
   notify(formatMessage('Loading current cycle voting results ...'))
-}
+})

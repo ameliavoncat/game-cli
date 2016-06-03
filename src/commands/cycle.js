@@ -1,9 +1,8 @@
 import loadCommand from '../util/loadCommand'
 import errorReporter from '../util/errorReporter'
-import assertFunctions from '../util/assertFunctions'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
-import defaultInvokeOptions from '../util/defaultInvokeOptions'
+import parseArgvAndInvoke from '../util/parseArgvAndInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('cycle')
 
@@ -38,32 +37,17 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
   }
 }
 
-export function invoke(argv, notify, options = {}) {
-  const opts = Object.assign({}, defaultInvokeOptions, options)
+export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) => {
   const {
-    formatMessage,
-    formatError,
-    formatUsage
-  } = opts
-  assertFunctions({notify, formatMessage, formatError, formatUsage})
-  let args
-  try {
-    args = parse(argv)
-  } catch (error) {
-    notify(formatError(error))
-    return
-  }
-  const usageText = usage(args)
-  if (usageText) {
-    notify(formatUsage(usageText))
-    return
-  } else if (args._.length === 1) {
+    formatUsage,
+  } = options
+  if (args._.length === 1) {
     const subcommandFuncs = {
-      launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, opts),
-      retro: () => handleUpdateCycleStateCommand('RETROSPECTIVE', '🤔  Initiating Retrospective... stand by.', notify, opts),
+      launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, options),
+      retro: () => handleUpdateCycleStateCommand('RETROSPECTIVE', '🤔  Initiating Retrospective... stand by.', notify, options),
     }
     return subcommandFuncs[args._[0]]()
   }
 
   notify(formatUsage(usage()))
-}
+})
