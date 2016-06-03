@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/game-cli",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib",
   "scripts": {
@@ -27,6 +27,8 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "raven": "^0.11.0",
     "subcli": "^0.1.0",
     "yamljs": "^0.2.7"
   },
@@ -38,6 +40,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "mocha": "^2.5.3",
+    "nock": "^8.0.0",
     "publish": "^0.6.0",
     "xo": "^0.15.1"
   },
