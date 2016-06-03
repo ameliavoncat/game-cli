@@ -3,4 +3,4 @@
 command:
   name: profile
   description: edit your user profile
-  usage: 'profile [options]'
+  usage: profile [options]

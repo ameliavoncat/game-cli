@@ -1,0 +1,29 @@
+%YAML 1.2
+---
+command:
+  name: learner
+  description: manage learners
+  usage: learner [options] <command>
+  commands:
+    -
+      name: status
+      description: Check status of a learner.
+      usage: status [<@handle>]
+      _inactive: true
+      examples:
+        -
+          example: learner status
+          description: View your own status.
+        -
+          example: learner status @jaime
+          description: View status of learner with handle @jaime.
+    -
+      name: play
+      description: Activate learner for current cycle.
+      usage: play <@handle>
+      _inactive: true
+    -
+      name: pause
+      description: Deactivate learner for current cycle.
+      usage: pause <@handle>
+      _inactive: true

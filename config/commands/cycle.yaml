@@ -7,14 +7,14 @@ command:
   commands:
     -
       name: launch
-      description: tally votes and create project teams
+      description: Tally votes and create project teams.
       usage: launch [options]
     -
       name: retro
-      description: initiate retrospective process
-      usage: launch [options]
+      description: Initiate retrospective process.
+      usage: retro [options]
     -
       name: status
-      description: display status information for the cycle
-      usage: launch [options]
+      description: Display status information for the cycle.
+      usage: status [options]
       _inactive: true

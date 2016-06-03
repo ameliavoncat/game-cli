@@ -1,0 +1,26 @@
+%YAML 1.2
+---
+command:
+  name: goal
+  description: manage goals
+  usage: goal [options] <command>
+  commands:
+    -
+      name: show
+      description: Show a particular goal.
+      usage: show <id>
+      _inactive: true
+      examples:
+        -
+          example: goal show 12
+          description: Show goal with id 12.
+    -
+      name: create
+      description: Create a new goal.
+      usage: create [<title>]
+      _inactive: true
+    -
+      name: search
+      description: Search for goals by title.
+      usage: search <query>
+      _inactive: true

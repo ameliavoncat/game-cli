@@ -1,0 +1,35 @@
+%YAML 1.2
+---
+command:
+  name: project
+  description: manage projects
+  usage: project [options] <command>
+  commands:
+    -
+      name: status
+      description: Check status of a project.
+      usage: status <id>
+      _inactive: true
+      examples:
+        -
+          example: 'project status #bad-lemurs-12'
+          description: 'View status of project with id #bad-lemurs-12.'
+    -
+      name: show
+      description: Show a particular project.
+      usage: show <id>
+      _inactive: true
+      examples:
+        -
+          example: 'project show #bad-lemurs-12'
+          description: 'Show project with id #bad-lemurs-12.'
+    -
+      name: list
+      description: List all active projects.
+      usage: list
+      _inactive: true
+    -
+      name: search
+      description: Search for projects by title.
+      usage: search <query>
+      _inactive: true
