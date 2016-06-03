@@ -3,6 +3,8 @@ import path from 'path'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
+process.env.APP_BASEURL = 'https://chat.learnersguild.org'
+
 // helpers
 global.testContext = filename => {
   const projectName = path.basename(path.resolve(__dirname, '..'))
