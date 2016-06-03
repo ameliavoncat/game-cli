@@ -16,8 +16,13 @@ function invokeUpdateCycleStateAPI(state, lgJWT) {
     .then(data => data.launchCycle)
 }
 
-function handleUpdateCycleStateCommand(state, statusMsg, lgJWT, lgUser, notify, options) {
-  const {formatMessage, formatError} = options
+function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
+  const {
+    lgJWT,
+    lgUser,
+    formatMessage,
+    formatError
+  } = options
   try {
     if (!lgJWT || !lgUser || lgUser.roles.indexOf('moderator') < 0) {
       throw new Error('You are not a moderator.')
@@ -33,8 +38,13 @@ function handleUpdateCycleStateCommand(state, statusMsg, lgJWT, lgUser, notify, 
   }
 }
 
-export function invoke(argv, lgJWT, lgUser, notify, options = defaultInvokeOptions) {
-  const {formatMessage, formatError, formatUsage} = options
+export function invoke(argv, notify, options = {}) {
+  const opts = Object.assign({}, defaultInvokeOptions, options)
+  const {
+    formatMessage,
+    formatError,
+    formatUsage
+  } = opts
   assertFunctions({notify, formatMessage, formatError, formatUsage})
   let args
   try {
@@ -47,8 +57,8 @@ export function invoke(argv, lgJWT, lgUser, notify, options = defaultInvokeOptio
     notify(formatUsage(usageText))
   } else if (args._.length === 1) {
     const subcommandFuncs = {
-      launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', lgJWT, lgUser, notify, options),
-      retro: () => handleUpdateCycleStateCommand('RETROSPECTIVE', '🤔  Initiating Retrospective... stand by.', lgJWT, lgUser, notify, options),
+      launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, opts),
+      retro: () => handleUpdateCycleStateCommand('RETROSPECTIVE', '🤔  Initiating Retrospective... stand by.', notify, opts),
     }
     return subcommandFuncs[args._[0]]()
   } else {

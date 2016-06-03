@@ -22,8 +22,13 @@ mutation($goalDescriptors: [String]!) {
     .then(data => data.voteForGoals)
 }
 
-function voteForGoals(goalDescriptors, lgJWT, lgPlayer, notify, options) {
-  const {formatMessage, formatError} = options
+function voteForGoals(goalDescriptors, notify, options) {
+  const {
+    lgJWT,
+    lgPlayer,
+    formatMessage,
+    formatError
+  } = options
   try {
     if (!lgJWT || !lgPlayer || !lgPlayer.id) {
       throw new Error('You are not a player in the game.')
@@ -46,8 +51,13 @@ function voteForGoals(goalDescriptors, lgJWT, lgPlayer, notify, options) {
   }
 }
 
-export function invoke(argv, lgJWT, lgPlayer, notify, options = defaultInvokeOptions) {
-  const {formatMessage, formatError, formatUsage} = options
+export function invoke(argv, notify, options = {}) {
+  const opts = Object.assign({}, defaultInvokeOptions, options)
+  const {
+    formatMessage,
+    formatError,
+    formatUsage
+  } = opts
   assertFunctions({notify, formatMessage, formatError, formatUsage})
   let args
   try {
@@ -59,7 +69,7 @@ export function invoke(argv, lgJWT, lgPlayer, notify, options = defaultInvokeOpt
   if (usageText) {
     notify(formatUsage(usageText))
   } else if (args._.length > 0) {
-    return voteForGoals(args._, lgJWT, lgPlayer, notify, options)
+    return voteForGoals(args._, notify, opts)
   } else {
     notify(formatMessage('Loading current cycle voting results ...'))
   }

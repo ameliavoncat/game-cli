@@ -19,19 +19,22 @@ describe(testContext(__filename), function () {
     })
 
     it('notifies with the usage message when requested', function () {
-      this.invoke(['-h'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/Usage:/)
     })
 
     it('notifies with an error message when too few goal descriptors are provided', function () {
-      this.invoke(['1'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      this.invoke(['1'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/exactly 2/)
     })
 
     it('notifies with an error message when invoked by a non-player', function () {
-      this.invoke(['1', '2'], this.lgJWT, null, this.notify)
+      const {lgJWT} = this
+      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: null})
       expect(this.notifications[0]).to.match(/not a player/)
-      this.invoke(['1', '2'], this.lgJWT, {object: 'without id attribute'}, this.notify)
+      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
       expect(this.notifications[1]).to.match(/not a player/)
     })
 
@@ -40,7 +43,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      this.invoke(['1', '2', '3'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      this.invoke(['1', '2', '3'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/disqualified/)
     })
 
@@ -49,7 +53,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      this.invoke(['1', '2'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/Validating/)
     })
 
@@ -58,7 +63,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      this.invoke(['1', '2'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/Validating/)
     })
 
@@ -67,7 +73,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      return this.invoke(['1', '2'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
         .then(() => {
           expect(this.notifications.length).to.equal(1)
           done()
@@ -80,7 +87,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(500, 'Internal Server Error')
 
-      return this.invoke(['1', '2'], this.lgJWT, this.lgPlayer, this.notify)
+      const {lgJWT, lgPlayer} = this
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
         .then(() => {
           expect(this.notifications[1]).to.match(/API invocation failed/)
           done()
