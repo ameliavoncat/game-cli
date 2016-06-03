@@ -29,7 +29,7 @@
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
     "raven": "^0.11.0",
-    "subcli": "^0.1.0",
+    "subcli": "^0.1.5",
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
