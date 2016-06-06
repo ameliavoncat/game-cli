@@ -1,27 +1,28 @@
 import path from 'path'
 import fs from 'fs'
 
-const LGJWT_FILENAME = path.join(process.env.HOME, '.lgJWT')
+const LGRC_FILENAME = path.join(process.env.HOME, '.lgrc')
 
-function getLGJWT() {
+function getUserOptions() {
   try {
-    fs.accessSync(LGJWT_FILENAME, fs.R_OK) // will throw if not readable
+    fs.accessSync(LGRC_FILENAME, fs.R_OK) // will throw if not readable
   } catch (error) {
     return null
   }
-  return fs.readFileSync(LGJWT_FILENAME).toString()
+  const userOptions = JSON.parse(fs.readFileSync(LGRC_FILENAME).toString())
+  return userOptions
 }
 
 function run(commandAndArgv) {
   process.env.APP_BASEURL = 'https://game-cli.learnersguild.org'
-  const lgJWT = getLGJWT()
-  if (!lgJWT) {
-    console.error(`***Error: No lgJWT SSO token available in ${LGJWT_FILENAME} -- try creating one.`)
+  const options = getUserOptions()
+  if (!options) {
+    console.error(`***Error: No Learners Guild RC file found in ${LGRC_FILENAME} -- try creating one.`)
     return Promise.resolve(1)
   }
   const [commandName, ...argv] = commandAndArgv
   const command = require('./')[commandName]
-  return command.invoke(argv, console.log, {lgJWT})
+  return command.invoke(argv, console.log, options)
 }
 
 if (!module.parent) {
