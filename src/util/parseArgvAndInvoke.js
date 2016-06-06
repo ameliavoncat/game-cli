@@ -14,7 +14,7 @@ export default function parseArgvAndInvoke(parse, usage, invokeFn) {
     try {
       args = parse(argv)
     } catch (error) {
-      notify(formatError(error))
+      notify(formatError(error.message || error))
       return
     }
     const usageText = usage(args)
@@ -23,6 +23,10 @@ export default function parseArgvAndInvoke(parse, usage, invokeFn) {
       return
     }
 
-    return invokeFn(args, notify, opts)
+    try {
+      return invokeFn(args, notify, opts)
+    } catch (error) {
+      notify(formatError(error.message || error))
+    }
   }
 }
