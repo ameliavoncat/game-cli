@@ -31,7 +31,8 @@ describe(testContext(__filename), function () {
       expect(this.notifications[0]).to.match(/\-\-help/)
     })
 
-    it('notifies that the retrospective survey being loaded when requested', function () {
+    // TODO: enable this test once APIs are ready
+    it('notifies that the retrospective survey being loaded when requested' /* , function () {
       // nock('https://game.learnersguild.test')
       //   .post('/graphql')
       //   .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
@@ -39,7 +40,18 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgPlayer} = this
       this.invoke(['-r'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/loading.+retrospective/i)
-    })
+    } */)
+
+    // TODO: enable this test once APIs are ready
+    it('notifies that the retrospective question is being loaded when requested' /* , function () {
+      // nock('https://game.learnersguild.test')
+      //   .post('/graphql')
+      //   .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
+
+      const {lgJWT, lgPlayer} = this
+      this.invoke(['-r1'], this.notify, {lgJWT, lgPlayer})
+      expect(this.notifications[0]).to.match(/loading.+question.+1/i)
+    } */)
 
     it('notifies with a usage hint when two questions are attempted at once', function () {
       // nock('https://game.learnersguild.test')
@@ -49,16 +61,6 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgPlayer} = this
       this.invoke(['-r1', 'answer1', '-r2', 'answer2'], this.notify, {lgJWT, lgPlayer})
       expect(this.notifications[0]).to.match(/\-\-help/)
-    })
-
-    it('throws an error if no response is provided for a given question', function () {
-      // nock('https://game.learnersguild.test')
-      //   .post('/graphql')
-      //   .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
-
-      const {lgJWT, lgPlayer} = this
-      const invokeFunc = () => this.invoke(['-r1'], this.notify, {lgJWT, lgPlayer})
-      expect(invokeFunc).to.throw(/must.+provide.+response/i)
     })
 
     // TODO: enable this test once APIs are ready
