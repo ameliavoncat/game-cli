@@ -27,16 +27,12 @@ export default function graphQLFetcher(lgJWT, baseURL, origin = APP_BASEURL) {
     return fetch(`${baseURL}/graphql`, options)
       .then(resp => {
         if (!resp.ok) {
-          throw new Error(`GraphQL ERROR: ${resp.statusText}`)
+          return resp.text().then(body => {
+            throw new Error(body)
+          })
         }
         return resp.json()
       })
-      .then(graphQLResponse => {
-        if (graphQLResponse.errors) {
-          const messages = graphQLResponse.errors.map(e => e.message)
-          throw new Error(messages.join('\n'))
-        }
-        return graphQLResponse.data
-      })
+      .then(graphQLResponse => graphQLResponse.data)
   }
 }

@@ -1,31 +1,18 @@
 import loadCommand from '../util/loadCommand'
-import assertFunctions from '../util/assertFunctions'
-import defaultInvokeOptions from '../util/defaultInvokeOptions'
+import composeInvoke from '../util/composeInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('profile')
 
-export function invoke(argv, notify, options = {}) {
-  const opts = Object.assign({}, defaultInvokeOptions, options)
+export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   const {
     formatMessage,
-    formatError,
-    formatUsage
-  } = opts
-  assertFunctions({notify, formatMessage, formatError, formatUsage})
-  let args
-  try {
-    args = parse(argv)
-  } catch (error) {
-    return notify(formatError(error))
-  }
-  const usageText = usage(args)
-  if (usageText) {
-    notify(formatUsage(usageText))
-    return
-  } else if (args._.length > 0) {
+    formatUsage,
+  } = options
+  if (args._.length > 0) {
     notify(formatUsage(usage()))
-    return
+    return Promise.resolve()
   }
 
   notify(formatMessage('Loading your profile ...'))
-}
+  return Promise.resolve()
+})
