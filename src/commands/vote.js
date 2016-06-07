@@ -2,7 +2,7 @@ import loadCommand from '../util/loadCommand'
 import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
-import parseArgvAndInvoke from '../util/parseArgvAndInvoke'
+import wrapInvokerWithArgvParser from '../util/wrapInvokerWithArgvParser'
 
 export const {parse, usage, commandDescriptor} = loadCommand('vote')
 
@@ -50,7 +50,7 @@ function voteForGoals(goalDescriptors, notify, options) {
   }
 }
 
-export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) => {
+export const invoke = wrapInvokerWithArgvParser(parse, usage, (args, notify, options) => {
   const {
     formatMessage,
   } = options

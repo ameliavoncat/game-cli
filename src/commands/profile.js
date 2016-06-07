@@ -1,9 +1,9 @@
 import loadCommand from '../util/loadCommand'
-import parseArgvAndInvoke from '../util/parseArgvAndInvoke'
+import wrapInvokerWithArgvParser from '../util/wrapInvokerWithArgvParser'
 
 export const {parse, usage, commandDescriptor} = loadCommand('profile')
 
-export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) => {
+export const invoke = wrapInvokerWithArgvParser(parse, usage, (args, notify, options) => {
   const {
     formatMessage,
     formatUsage,

@@ -2,7 +2,7 @@
 /* global expect, testContext */
 /* eslint-disable prefer-arrow-callback, no-unused-expressions */
 
-import parseArgvAndInvoke from '../parseArgvAndInvoke'
+import wrapInvokerWithArgvParser from '../wrapInvokerWithArgvParser'
 
 describe(testContext(__filename), function () {
   before(function () {
@@ -36,7 +36,7 @@ describe(testContext(__filename), function () {
       throw new Error('parse failed')
     }
     const usage = () => null
-    const invoke = parseArgvAndInvoke(parse, usage, () => null)
+    const invoke = wrapInvokerWithArgvParser(parse, usage, () => null)
     invoke([], this.notify, this.options)
     expect(this.notified).to.be.ok
     expect(this.formattedError).to.be.ok
@@ -47,7 +47,7 @@ describe(testContext(__filename), function () {
     const usage = () => {
       return 'Usage: blah blah blah'
     }
-    const invoke = parseArgvAndInvoke(parse, usage, () => null)
+    const invoke = wrapInvokerWithArgvParser(parse, usage, () => null)
     invoke([], this.notify, this.options)
     expect(this.notified).to.be.ok
     expect(this.formattedUsage).to.be.ok
@@ -57,7 +57,7 @@ describe(testContext(__filename), function () {
     const parse = () => null
     const usage = () => undefined
     let invoked = false
-    const invoke = parseArgvAndInvoke(parse, usage, () => {
+    const invoke = wrapInvokerWithArgvParser(parse, usage, () => {
       invoked = true
     })
     invoke([], this.notify, this.options)
