@@ -30,7 +30,7 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
     return invokeUpdateCycleStateAPI(state, lgJWT)
       .catch(error => {
         errorReporter.captureException(error)
-        notify(formatError(`API invocation failed: ${error.message}`))
+        notify(formatError(`API invocation failed: ${error.message || error}`))
       })
   } catch (errorMessage) {
     notify(formatError(errorMessage.message))

@@ -43,7 +43,7 @@ function voteForGoals(goalDescriptors, notify, options) {
     return invokeVoteAPI(lgJWT, goalDescriptors)
       .catch(error => {
         errorReporter.captureException(error)
-        notify(formatError(`API invocation failed: ${error.message}`))
+        notify(formatError(`API invocation failed: ${error.message || error}`))
       })
   } catch (errorMessage) {
     notify(formatError(errorMessage.message))

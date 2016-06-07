@@ -1,3 +1,4 @@
+import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
 import loadCommand from '../util/loadCommand'
@@ -51,6 +52,7 @@ export const invoke = wrapInvokerWithArgvParser(parse, usage, (args, notify, opt
       notify(formatMessage(`Logging your reflection for question ${questionNumber} ...`))
       return invokeResponseAPI(lgJWT, questionNumber, args._)
         .catch(error => {
+          errorReporter.captureException(error)
           notify(formatError(`API invocation failed: ${error.message || error}`))
         })
     }
