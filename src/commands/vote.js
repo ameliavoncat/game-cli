@@ -28,26 +28,22 @@ function voteForGoals(goalDescriptors, notify, options) {
     formatMessage,
     formatError
   } = options
-  try {
-    if (!lgJWT || !lgPlayer || !lgPlayer.id) {
-      throw new Error('You are not a player in the game.')
-    }
-    if (goalDescriptors.length === 1) {
-      throw new Error('You must vote for exactly 2 goals.')
-    }
-    if (goalDescriptors.length > 2) {
-      notify(formatMessage(`Only 2 goals are allowed, so these were disqualified: ${goalDescriptors.slice(2).join(', ')}`))
-    }
-
-    notify(formatMessage(`Validating the goals you voted on: ${goalDescriptors.join(', ')}`))
-    return invokeVoteAPI(lgJWT, goalDescriptors)
-      .catch(error => {
-        errorReporter.captureException(error)
-        notify(formatError(`API invocation failed: ${error.message || error}`))
-      })
-  } catch (errorMessage) {
-    notify(formatError(errorMessage.message))
+  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
+    return Promise.reject('You are not a player in the game.')
   }
+  if (goalDescriptors.length === 1) {
+    return Promise.reject('You must vote for exactly 2 goals.')
+  }
+  if (goalDescriptors.length > 2) {
+    notify(formatMessage(`Only 2 goals are allowed, so these were disqualified: ${goalDescriptors.slice(2).join(', ')}`))
+  }
+
+  notify(formatMessage(`Validating the goals you voted on: ${goalDescriptors.join(', ')}`))
+  return invokeVoteAPI(lgJWT, goalDescriptors)
+    .catch(error => {
+      errorReporter.captureException(error)
+      notify(formatError(`API invocation failed: ${error.message || error}`))
+    })
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {

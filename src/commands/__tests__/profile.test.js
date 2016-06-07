@@ -16,17 +16,23 @@ describe(testContext(__filename), function () {
 
     it('notifies with the usage message when requested', function () {
       this.invoke(['-h'], this.notify)
-      expect(this.notifications[0]).to.match(/Usage:/)
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Usage:/)
+        })
     })
 
     it('notifies with the usage message if arguments are supplied', function () {
       this.invoke(['ANYTHING'], this.notify)
-      expect(this.notifications[0]).to.match(/Usage:/)
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Usage:/)
+        })
     })
 
     it('notifies that the profile is being loaded', function () {
-      this.invoke([], this.notify)
-      expect(this.notifications[0]).to.match(/Loading.+profile/i)
+      return this.invoke([], this.notify)
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Loading.+profile/i)
+        })
     })
   })
 })

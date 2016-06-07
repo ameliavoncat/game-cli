@@ -10,8 +10,9 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   } = options
   if (args._.length > 0) {
     notify(formatUsage(usage()))
-    return
+    return Promise.resolve()
   }
 
   notify(formatMessage('Loading your profile ...'))
+  return Promise.resolve()
 })

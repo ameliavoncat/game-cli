@@ -20,22 +20,32 @@ describe(testContext(__filename), function () {
 
     it('notifies with the usage message when requested', function () {
       const {lgJWT, lgUser} = this
-      this.invoke(['-h'], this.notify, {lgJWT, lgUser})
-      expect(this.notifications[0]).to.match(/Usage:/)
+      return this.invoke(['-h'], this.notify, {lgJWT, lgUser})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Usage:/)
+        })
     })
 
     it('notifies with an error message if action is invalid', function () {
       const {lgJWT, lgUser} = this
-      this.invoke(['INVALID_ACTION'], this.notify, {lgJWT, lgUser})
-      expect(this.notifications[0]).to.match(/no such subcommand/)
+      return this.invoke(['INVALID_ACTION'], this.notify, {lgJWT, lgUser})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/no such subcommand/)
+        })
     })
 
     it('notifies with an error message when invoked by a non-moderator', function () {
       const {lgJWT} = this
-      this.invoke(['launch'], this.notify, {lgJWT, lgUser: null})
-      expect(this.notifications[0]).to.match(/not a moderator/)
-      this.invoke(['launch'], this.notify, {lgJWT, lgUser: {roles: ['player']}})
-      expect(this.notifications[1]).to.match(/not a moderator/)
+      return Promise.all([
+        this.invoke(['launch'], this.notify, {lgJWT, lgUser: null})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/not a moderator/)
+          }),
+        this.invoke(['launch'], this.notify, {lgJWT, lgUser: {roles: ['player']}})
+          .then(() => {
+            expect(this.notifications[1]).to.match(/not a moderator/)
+          })
+      ])
     })
 
     it('notifies that the state is being initiated', function () {
@@ -44,8 +54,10 @@ describe(testContext(__filename), function () {
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
       const {lgJWT, lgUser} = this
-      this.invoke(['retro'], this.notify, {lgJWT, lgUser})
-      expect(this.notifications[0]).to.match(/Initiating/)
+      return this.invoke(['retro'], this.notify, {lgJWT, lgUser})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Initiating/)
+        })
     })
 
     it('does not notify if the API invocation succeeds', function (done) {

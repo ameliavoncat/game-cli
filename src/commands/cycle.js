@@ -22,19 +22,15 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
     formatMessage,
     formatError
   } = options
-  try {
-    if (!lgJWT || !lgUser || lgUser.roles.indexOf('moderator') < 0) {
-      throw new Error('You are not a moderator.')
-    }
-    notify(formatMessage(statusMsg))
-    return invokeUpdateCycleStateAPI(state, lgJWT)
-      .catch(error => {
-        errorReporter.captureException(error)
-        notify(formatError(`API invocation failed: ${error.message || error}`))
-      })
-  } catch (errorMessage) {
-    notify(formatError(errorMessage.message))
+  if (!lgJWT || !lgUser || lgUser.roles.indexOf('moderator') < 0) {
+    return Promise.reject('You are not a moderator.')
   }
+  notify(formatMessage(statusMsg))
+  return invokeUpdateCycleStateAPI(state, lgJWT)
+    .catch(error => {
+      errorReporter.captureException(error)
+      notify(formatError(`API invocation failed: ${error.message || error}`))
+    })
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {

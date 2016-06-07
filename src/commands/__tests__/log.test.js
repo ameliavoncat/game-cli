@@ -21,14 +21,18 @@ describe(testContext(__filename), function () {
 
     it('notifies with the usage message when requested', function () {
       const {lgJWT, lgPlayer} = this
-      this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/Usage:/)
+      return this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Usage:/)
+        })
     })
 
     it('notifies with a usage hint when not logging reflections', function () {
       const {lgJWT, lgPlayer} = this
-      this.invoke([], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/\-\-help/)
+      return this.invoke([], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/\-\-help/)
+        })
     })
 
     // TODO: enable this test once APIs are ready
@@ -56,15 +60,23 @@ describe(testContext(__filename), function () {
     it('notifies with a usage hint when two questions are attempted at once', function () {
       const {lgJWT, lgPlayer} = this
       this.invoke(['-r1', 'answer1', '-r2', 'answer2'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/\-\-help/)
+        .then(() => {
+          expect(this.notifications[0]).to.match(/\-\-help/)
+        })
     })
 
     it('notifies with an error message when invoked by a non-player', function () {
       const {lgJWT} = this
-      this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: null})
-      expect(this.notifications[0]).to.match(/not a player/)
-      this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
-      expect(this.notifications[1]).to.match(/not a player/)
+      return Promise.all([
+        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: null})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/not a player/)
+          }),
+        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
+          .then(() => {
+            expect(this.notifications[1]).to.match(/not a player/)
+          })
+      ])
     })
 
     it('notifies that the reflection is being logged', function () {

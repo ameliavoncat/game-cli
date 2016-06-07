@@ -29,15 +29,14 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     formatMessage,
   } = options
   if (!lgJWT || !lgPlayer || !lgPlayer.id) {
-    throw new Error('You are not a player in the game.')
+    return Promise.reject('You are not a player in the game.')
   }
   if (typeof args.reflection === 'string') {
     if (args.reflection === '') {
       // display retrospective survey
       // see: https://github.com/LearnersGuild/game-cli/issues/13
       // notify(formatMessage('Loading retrospective survey ...'))
-      notify(formatError('Unable to load retrospective survey (NOT YET IMPLEMENTED).'))
-      return
+      return Promise.reject('Unable to load retrospective survey (NOT YET IMPLEMENTED).')
     }
     if (args.reflection.match(/^\d+$/)) {
       const questionNumber = parseInt(args.reflection, 10)
@@ -45,8 +44,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
         // display retrospective question
         // see: https://github.com/LearnersGuild/game-cli/issues/14
         // notify(formatMessage(`Loading retrospective question ${questionNumber} ...`))
-        notify(formatError(`Unable to load retrospective question ${questionNumber} (NOT YET IMPLEMENTED).`))
-        return
+        return Promise.reject(`Unable to load retrospective question ${questionNumber} (NOT YET IMPLEMENTED).`)
       }
       // log reflection for particular question
       notify(formatMessage(`Logging your reflection for question ${questionNumber} ...`))
@@ -57,5 +55,5 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
         })
     }
   }
-  notify(formatError('Invalid arguments. Try --help for usage.'))
+  return Promise.reject('Invalid arguments. Try --help for usage.')
 })

@@ -20,22 +20,32 @@ describe(testContext(__filename), function () {
 
     it('notifies with the usage message when requested', function () {
       const {lgJWT, lgPlayer} = this
-      this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/Usage:/)
+      return this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Usage:/)
+        })
     })
 
     it('notifies with an error message when too few goal descriptors are provided', function () {
       const {lgJWT, lgPlayer} = this
-      this.invoke(['1'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/exactly 2/)
+      return this.invoke(['1'], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/exactly 2/)
+        })
     })
 
     it('notifies with an error message when invoked by a non-player', function () {
       const {lgJWT} = this
-      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: null})
-      expect(this.notifications[0]).to.match(/not a player/)
-      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
-      expect(this.notifications[1]).to.match(/not a player/)
+      return Promise.all([
+        this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: null})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/not a player/)
+          }),
+        this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
+          .then(() => {
+            expect(this.notifications[1]).to.match(/not a player/)
+          })
+      ])
     })
 
     it('notifies with a warning if extra goal descriptors are provided', function () {
@@ -44,8 +54,10 @@ describe(testContext(__filename), function () {
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(['1', '2', '3'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/disqualified/)
+      return this.invoke(['1', '2', '3'], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/disqualified/)
+        })
     })
 
     it('notifies that the goals are being validated', function () {
@@ -54,8 +66,10 @@ describe(testContext(__filename), function () {
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/Validating/)
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Validating/)
+        })
     })
 
     it('notifies that the goals are being validated', function () {
@@ -64,8 +78,10 @@ describe(testContext(__filename), function () {
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/Validating/)
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/Validating/)
+        })
     })
 
     it('does not notify if the API invocation succeeds', function (done) {
