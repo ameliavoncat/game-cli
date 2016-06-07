@@ -9,18 +9,18 @@ command:
       name: retro
       abbr: r
       boolean: true
-      help: Show list of retrospective questions for current retrospective. Use in conjunction with the `-q<id>` option to display and respond to retrospective questions.
+      help: Show list of retrospective questions for current retrospective. Use in conjunction with the `-q<index>` option to display and respond to retrospective questions.
     -
       name: question
       abbr: q
-      help: Show a question with the id provided. Provide a response argument to log a response for the question.
+      help: Show a question using its index. Provide a response argument to log a response for the question.
   examples:
     -
       example: log --retro
       description: Show retrospective status and list of questions.
     -
       example: log -r -q2
-      description: Show retrospective question number 2.
+      description: Show retrospective question with index 2.
     -
       example: log -r -q2 "So far so good"
       description: Respond to retrospective question 2 with a message.
