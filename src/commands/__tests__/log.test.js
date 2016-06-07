@@ -11,7 +11,7 @@ describe(testContext(__filename), function () {
       this.notify = msg => {
         this.notifications.push(msg)
       }
-      this.argv = ['-r1', 'some1:25', 'some2:25', 'some3:25', 'some4:25']
+      this.argv = ['-rq', '1', 'some1:25', 'some2:25', 'some3:25', 'some4:25']
       this.lgJWT = 'not.a.real.token'
       this.lgPlayer = {id: 'not.a.real.id'}
     })
@@ -85,8 +85,10 @@ describe(testContext(__filename), function () {
         .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/logging.+reflection/i)
+      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/logging.+reflection/i)
+        })
     })
 
     it('does not notify if the API invocation succeeds', function (done) {
@@ -95,7 +97,7 @@ describe(testContext(__filename), function () {
         .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
 
       const {lgJWT, lgPlayer} = this
-      return this.invoke(['-r1', 'answer'], this.notify, {lgJWT, lgPlayer})
+      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
         .then(() => {
           expect(this.notifications.length).to.equal(1)
           done()
@@ -109,7 +111,7 @@ describe(testContext(__filename), function () {
         .reply(500, 'Internal Server Error')
 
       const {lgJWT, lgPlayer} = this
-      return this.invoke(['-r', '99999999', 'answer'], this.notify, {lgJWT, lgPlayer})
+      return this.invoke(['--retro', '--question', '99999999', 'answer'], this.notify, {lgJWT, lgPlayer})
         .then(() => {
           expect(this.notifications[1]).to.match(/API invocation failed/)
           done()
