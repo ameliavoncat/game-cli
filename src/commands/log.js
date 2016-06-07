@@ -2,7 +2,7 @@ import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
 import loadCommand from '../util/loadCommand'
-import wrapInvokerWithArgvParser from '../util/wrapInvokerWithArgvParser'
+import composeInvoke from '../util/composeInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('log')
 
@@ -21,7 +21,7 @@ mutation($response: CLISurveyResponse!) {
     .then(data => data.saveRetrospectiveCLISurveyResponse)
 }
 
-export const invoke = wrapInvokerWithArgvParser(parse, usage, (args, notify, options) => {
+export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   const {
     lgJWT,
     lgPlayer,

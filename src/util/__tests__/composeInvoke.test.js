@@ -2,7 +2,7 @@
 /* global expect, testContext */
 /* eslint-disable prefer-arrow-callback, no-unused-expressions */
 
-import wrapInvokerWithArgvParser from '../wrapInvokerWithArgvParser'
+import composeInvoke from '../composeInvoke'
 
 describe(testContext(__filename), function () {
   before(function () {
@@ -36,7 +36,7 @@ describe(testContext(__filename), function () {
       throw new Error('parse failed')
     }
     const usage = () => null
-    const invoke = wrapInvokerWithArgvParser(parse, usage, () => null)
+    const invoke = composeInvoke(parse, usage, () => null)
     invoke([], this.notify, this.options)
     expect(this.notified).to.be.ok
     expect(this.formattedError).to.be.ok
@@ -47,7 +47,7 @@ describe(testContext(__filename), function () {
     const usage = () => {
       return 'Usage: blah blah blah'
     }
-    const invoke = wrapInvokerWithArgvParser(parse, usage, () => null)
+    const invoke = composeInvoke(parse, usage, () => null)
     invoke([], this.notify, this.options)
     expect(this.notified).to.be.ok
     expect(this.formattedUsage).to.be.ok
@@ -57,7 +57,7 @@ describe(testContext(__filename), function () {
     const parse = () => null
     const usage = () => undefined
     let invoked = false
-    const invoke = wrapInvokerWithArgvParser(parse, usage, () => {
+    const invoke = composeInvoke(parse, usage, () => {
       invoked = true
     })
     invoke([], this.notify, this.options)

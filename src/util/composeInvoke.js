@@ -1,7 +1,7 @@
 import assertFunctions from './assertFunctions'
 import defaultInvokeOptions from './defaultInvokeOptions'
 
-export default function wrapInvokerWithArgvParser(parse, usage, invokeFn) {
+export default function composeInvoke(parse, usage, invokeFn) {
   return (argv, notify, options = {}) => {
     const opts = Object.assign({}, defaultInvokeOptions, options)
     const {

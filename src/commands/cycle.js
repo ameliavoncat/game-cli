@@ -2,7 +2,7 @@ import loadCommand from '../util/loadCommand'
 import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
-import wrapInvokerWithArgvParser from '../util/wrapInvokerWithArgvParser'
+import composeInvoke from '../util/composeInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('cycle')
 
@@ -37,7 +37,7 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
   }
 }
 
-export const invoke = wrapInvokerWithArgvParser(parse, usage, (args, notify, options) => {
+export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   const {
     formatUsage,
   } = options
