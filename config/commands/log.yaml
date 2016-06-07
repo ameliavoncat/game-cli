@@ -3,7 +3,7 @@
 command:
   name: log
   description: log reflections
-  usage: log [options] [-q<id> | -q<id> <...response>]
+  usage: log [options] [response]
   options:
     -
       name: retro
