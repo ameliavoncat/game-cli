@@ -37,7 +37,8 @@ export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) =
       // notify(formatMessage('Loading retrospective survey ...'))
       notify(formatError('Unable to load retrospective survey (NOT YET IMPLEMENTED).'))
       return
-    } else if (args.reflection.match(/^\d+$/)) {
+    }
+    if (args.reflection.match(/^\d+$/)) {
       const questionNumber = parseInt(args.reflection, 10)
       if (args._.length === 0) {
         // display retrospective question
