@@ -5,7 +5,7 @@ import parseArgvAndInvoke from '../util/parseArgvAndInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('log')
 
-function invokeResponseAPI(lgJWT, questionNumber, responseParams) {
+function invokeResponseAPI(lgJWT, lgPlayer, questionNumber, responseParams) {
   const mutation = {
     query: `
 mutation($response: CLISurveyResponse!) {
@@ -23,9 +23,13 @@ mutation($response: CLISurveyResponse!) {
 export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) => {
   const {
     lgJWT,
+    lgPlayer,
     formatError,
     formatMessage,
   } = options
+  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
+    throw new Error('You are not a player in the game.')
+  }
   if (typeof args.reflection === 'string') {
     if (args.reflection === '') {
       // display retrospective survey
@@ -45,6 +49,9 @@ export const invoke = parseArgvAndInvoke(parse, usage, (args, notify, options) =
       // log reflection for particular question
       notify(formatMessage(`Logging your reflection for question ${questionNumber} ...`))
       return invokeResponseAPI(lgJWT, questionNumber, args._)
+        .catch(error => {
+          notify(formatError(`API invocation failed: ${error.message || error}`))
+        })
     }
   }
   notify(formatError('Invalid arguments. Try --help for usage.'))
