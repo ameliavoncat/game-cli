@@ -8,6 +8,7 @@ command:
     -
       name: retro
       abbr: r
+      boolean: true
       help: Show list of retrospective questions for current retrospective. Use in conjunction with the `-q<id>` option to display and respond to retrospective questions.
     -
       name: question
