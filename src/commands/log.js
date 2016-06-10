@@ -6,7 +6,7 @@ import composeInvoke from '../util/composeInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('log')
 
-function invokeResponseAPI(lgJWT, lgPlayer, questionNumber, responseParams) {
+function invokeResponseAPI(lgJWT, questionNumber, responseParams) {
   const mutation = {
     query: `
 mutation($response: CLISurveyResponse!) {
@@ -19,6 +19,35 @@ mutation($response: CLISurveyResponse!) {
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
     .then(data => data.saveRetrospectiveCLISurveyResponse)
+}
+
+function invokeSurveyQuestionAPI(lgJWT, questionNumber) {
+  const query = {
+    query:
+      `query($questionNumber: Int!) {
+        getRetrospectiveSurveyQuestion(questionNumber: $questionNumber) {
+          ... on SurveyQuestionInterface {
+            id subjectType responseType body
+          }
+          ... on SinglePartSubjectSurveyQuestion {
+            subject { id name handle }
+          }
+          ... on MultiPartSubjectSurveyQuestion {
+            subject { id name handle }
+          }
+        }
+      }`,
+    variables: {questionNumber},
+  }
+  return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(query)
+    .then(data => data.getRetrospectiveSurveyQuestion)
+}
+
+function formatQuestion(question, {questionNumber}) {
+  return `
+${questionNumber}. Answer the following question about ${question.subject.name}:
+${question.body}
+`
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
@@ -41,10 +70,12 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     if (args.retro && args.question.match(/^\d+$/)) {
       const questionNumber = parseInt(args.question, 10)
       if (args._.length === 0) {
-        // display retrospective question
-        // see: https://github.com/LearnersGuild/game-cli/issues/14
-        // notify(formatMessage(`Loading retrospective question ${questionNumber} ...`))
-        return Promise.reject(`Unable to load retrospective question ${questionNumber} (NOT YET IMPLEMENTED).`)
+        return invokeSurveyQuestionAPI(lgJWT, questionNumber)
+          .then(question => notify(formatMessage(formatQuestion(question, {questionNumber}))))
+          .catch(error => {
+            errorReporter.captureException(error)
+            notify(formatError(`API invocation failed: ${error.message || error}`))
+          })
       }
       // log reflection for particular question
       notify(formatMessage(`Logging your reflection for question ${questionNumber} ...`))

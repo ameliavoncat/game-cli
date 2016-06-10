@@ -15,8 +15,13 @@ describe(testContext(__filename), function () {
       this.lgJWT = 'not.a.real.token'
       this.lgPlayer = {id: 'not.a.real.id'}
     })
+
     beforeEach(function () {
       this.notifications = []
+    })
+
+    afterEach(function () {
+      nock.cleanAll()
     })
 
     it('notifies with the usage message when requested', function () {
@@ -46,16 +51,28 @@ describe(testContext(__filename), function () {
       expect(this.notifications[0]).to.match(/loading.+retrospective/i)
     } */)
 
-    // TODO: enable this test once APIs are ready
-    it('notifies that the retrospective question is being loaded when requested' /* , function () {
-      // nock('https://game.learnersguild.test')
-      //   .post('/graphql')
-      //   .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
+    it('notifies that the retrospective question is being loaded when requested', function () {
+      nock('https://game.learnersguild.test')
+        .post('/graphql')
+        .reply(200, {data: {
+          getRetrospectiveSurveyQuestion: {
+            id: '99ede319-882f-4dc8-81e2-be43f891a1ba',
+            subjectType: 'player',
+            responseType: 'text',
+            body: 'What is one thing this player did well?',
+            subject: {
+              id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
+              name: 'Rosemarie Kub',
+              handle: 'mobile81'
+            }
+          }
+        }})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(['-r1'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/loading.+question.+1/i)
-    } */)
+      return this.invoke(['-rq', '1'], this.notify, {lgJWT, lgPlayer}).then(() => {
+        expect(this.notifications).to.match(/What is one thing this player did well?/i)
+      })
+    })
 
     it('notifies with a usage hint when two questions are attempted at once', function () {
       const {lgJWT, lgPlayer} = this
