@@ -74,7 +74,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
           .then(question => notify(formatMessage(formatQuestion(question, {questionNumber}))))
           .catch(error => {
             errorReporter.captureException(error)
-            notify(formatError(`API invocation failed: ${error.message || error}`))
+            notify(formatError(`${error.message || error}`))
           })
       }
       // log reflection for particular question
