@@ -3,7 +3,7 @@ import path from 'path'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
-process.env.APP_BASEURL = 'https://chat.learnersguild.test'
+process.env.APP_BASE_URL = 'https://chat.learnersguild.test'
 
 // helpers
 global.testContext = filename => {

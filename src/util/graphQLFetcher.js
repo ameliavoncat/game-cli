@@ -1,8 +1,9 @@
 import fetch from 'isomorphic-fetch'
 
-const APP_BASEURL = process.env.APP_BASEURL || null
+//                 new preferred               old                        Rocket.Chat
+const ORIGIN_URL = process.env.APP_BASE_URL || process.env.APP_BASEURL || process.env.ROOT_URL
 
-export default function graphQLFetcher(lgJWT, baseURL, origin = APP_BASEURL) {
+export default function graphQLFetcher(lgJWT, baseURL, origin = ORIGIN_URL) {
   if (!lgJWT) {
     throw new Error('Need lgJWT to set "Authorization:" header')
   }
