@@ -6,50 +6,113 @@ import composeInvoke from '../util/composeInvoke'
 
 export const {parse, usage, commandDescriptor} = loadCommand('log')
 
-function invokeResponseAPI(lgJWT, questionNumber, responseParams) {
-  const mutation = {
-    query: `
-mutation($response: CLISurveyResponse!) {
-  saveRetrospectiveCLISurveyResponse(response: $response) {
-    createdIds
+class LogRetroCommand {
+  constructor(lgJWT, notify, formatMessage, formatError) {
+    this.runGraphQLQuery = graphQLFetcher(lgJWT, getServiceBaseURL(GAME))
+    this.notifyMsg = msg => notify(formatMessage(msg))
+    this.notifyError = err => notify(formatError(err))
   }
-}
-    `,
-    variables: {response: {questionNumber, responseParams}},
-  }
-  return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
-    .then(data => data.saveRetrospectiveCLISurveyResponse)
-}
 
-function invokeSurveyQuestionAPI(lgJWT, questionNumber) {
-  const query = {
-    query:
-      `query($questionNumber: Int!) {
-        getRetrospectiveSurveyQuestion(questionNumber: $questionNumber) {
-          ... on SurveyQuestionInterface {
-            id subjectType responseType body
-            responseIntructions
-          }
-          ... on SinglePartSubjectSurveyQuestion {
-            subject { id name handle }
-          }
-          ... on MultiPartSubjectSurveyQuestion {
-            subject { id name handle }
+  invokeResponseAPI(questionNumber, responseParams) {
+    const mutation = {
+      query: `
+        mutation($response: CLISurveyResponse!) {
+          saveRetrospectiveCLISurveyResponse(response: $response) {
+            createdIds
           }
         }
-      }`,
-    variables: {questionNumber},
+      `,
+      variables: {response: {questionNumber, responseParams}},
+    }
+    return this.runGraphQLQuery(mutation)
+      .then(data => data.saveRetrospectiveCLISurveyResponse)
   }
-  return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(query)
-    .then(data => data.getRetrospectiveSurveyQuestion)
-}
 
-function formatQuestion(question, {questionNumber}) {
-  let questionText = `*Q${questionNumber}*: ${question.body}`
-  if (question.responseIntructions) {
-    questionText = `${questionText}\n\n${question.responseIntructions}`
+  invokeSurveyQuestionAPI(questionNumber) {
+    const query = {
+      query:
+        `query($questionNumber: Int!) {
+          getRetrospectiveSurveyQuestion(questionNumber: $questionNumber) {
+            ... on SurveyQuestionInterface {
+              id subjectType responseType body
+              responseIntructions
+            }
+            ... on SinglePartSubjectSurveyQuestion {
+              subject { id name handle }
+            }
+            ... on MultiPartSubjectSurveyQuestion {
+              subject { id name handle }
+            }
+          }
+        }`,
+      variables: {questionNumber},
+    }
+    return this.runGraphQLQuery(query)
+      .then(data => data.getRetrospectiveSurveyQuestion)
   }
-  return questionText
+
+  invokeGetSurveyAPI() {
+    const query = {
+      query:
+        `query {
+          getRetrospectiveSurvey {
+            questions {
+              ... on SurveyQuestionInterface {
+                id subjectType responseType body
+                responseIntructions
+              }
+              ... on SinglePartSubjectSurveyQuestion {
+                subject { id name handle }
+              }
+              ... on MultiPartSubjectSurveyQuestion {
+                subject { id name handle }
+              }
+            }
+          }
+        }`,
+    }
+    return this.runGraphQLQuery(query)
+      .then(data => data.getRetrospectiveSurvey)
+  }
+
+  formatQuestion(question, {questionNumber, skipInstructions}) {
+    let questionText = `*Q${questionNumber}*: ${question.body}`
+    if (!skipInstructions && question.responseIntructions) {
+      questionText = `${questionText}\n\n${question.responseIntructions}`
+    }
+    return questionText
+  }
+
+  printSurvey() {
+    return this.invokeGetSurveyAPI()
+      .then(survey =>
+        this.notifyMsg(survey.questions.map(
+          (question, i) => this.formatQuestion(question, {questionNumber: i + 1, skipInstructions: true})
+        ).join(`\n`))
+      )
+      .catch(error => {
+        errorReporter.captureException(error)
+        this.notifyError(`${error.message || error}`)
+      })
+  }
+
+  printSurveyQuestion(questionNumber) {
+    return this.invokeSurveyQuestionAPI(questionNumber)
+      .then(question => this.notifyMsg(this.formatQuestion(question, {questionNumber})))
+      .catch(error => {
+        errorReporter.captureException(error)
+        this.notifyError(`${error.message || error}`)
+      })
+  }
+
+  logReflection(questionNumber, responseParams) {
+    return this.invokeResponseAPI(questionNumber, responseParams)
+      .then(() => this.notifyMsg(`Reflection logged for question ${questionNumber}`))
+      .catch(error => {
+        errorReporter.captureException(error)
+        this.notifyError(`API invocation failed: ${error.message || error}`)
+      })
+  }
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
@@ -62,31 +125,18 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   if (!lgJWT || !lgPlayer || !lgPlayer.id) {
     return Promise.reject('You are not a player in the game.')
   }
-  if (typeof args.question === 'string') {
-    if (args.retro && args.question === '') {
-      // display retrospective survey
-      // see: https://github.com/LearnersGuild/game-cli/issues/13
-      // notify(formatMessage('Loading retrospective survey ...'))
-      return Promise.reject('Unable to load retrospective survey (NOT YET IMPLEMENTED).')
-    }
-    if (args.retro && args.question.match(/^\d+$/)) {
+  if (args.retro) {
+    const retro = new LogRetroCommand(lgJWT, notify, formatMessage, formatError)
+
+    if (typeof args.question === 'string' && args.question.match(/^\d+$/)) {
       const questionNumber = parseInt(args.question, 10)
-      if (args._.length === 0) {
-        return invokeSurveyQuestionAPI(lgJWT, questionNumber)
-          .then(question => notify(formatMessage(formatQuestion(question, {questionNumber}))))
-          .catch(error => {
-            errorReporter.captureException(error)
-            notify(formatError(`${error.message || error}`))
-          })
+      const responseParams = args._
+      if (responseParams.length === 0) {
+        return retro.printSurveyQuestion(questionNumber)
       }
-      // log reflection for particular question
-      notify(formatMessage(`Logging your reflection for question ${questionNumber} ...`))
-      return invokeResponseAPI(lgJWT, questionNumber, args._)
-        .catch(error => {
-          errorReporter.captureException(error)
-          notify(formatError(`API invocation failed: ${error.message || error}`))
-        })
+      return retro.logReflection(questionNumber, responseParams)
     }
+    return retro.printSurvey()
   }
   return Promise.reject('Invalid arguments. Try --help for usage.')
 })
