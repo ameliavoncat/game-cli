@@ -10,9 +10,18 @@ function filterOutInactiveCommands(commands) {
 function genCommandMap() {
   const commandSrcDir = path.resolve(__dirname, 'commands')
   const commandSourceFilenames = fs.readdirSync(commandSrcDir)
-    .filter(filename => filename.match(/\.js$/))
     .map(filename => path.resolve(commandSrcDir, filename))
-  const commands = commandSourceFilenames.map(filename => require(filename))
+  const commands = commandSourceFilenames
+    .filter(filename => {
+      try {
+        const filenameToRequire = filename.match(/\.js$/) ? filename : path.join(filename, 'index.js')
+        fs.accessSync(filenameToRequire, fs.R_OK)
+        return true
+      } catch (error) {
+        return false
+      }
+    })
+    .map(filename => require(filename))
   return filterOutInactiveCommands(commands)                  // ensure that it's not marked _inactive
     .filter(command => typeof command.invoke === 'function')  // ensure that there's an implementation
     .reduce((commandMap, command) => {
