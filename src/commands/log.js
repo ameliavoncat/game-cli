@@ -28,6 +28,7 @@ function invokeSurveyQuestionAPI(lgJWT, questionNumber) {
         getRetrospectiveSurveyQuestion(questionNumber: $questionNumber) {
           ... on SurveyQuestionInterface {
             id subjectType responseType body
+            responseIntructions
           }
           ... on SinglePartSubjectSurveyQuestion {
             subject { id name handle }
@@ -43,27 +44,12 @@ function invokeSurveyQuestionAPI(lgJWT, questionNumber) {
     .then(data => data.getRetrospectiveSurveyQuestion)
 }
 
-function formatSubject(subject) {
-  if (!Array.isArray(subject)) {
-    return subject.handle
-  }
-
-  if (subject.length === 1) {
-    return subject[0]
-  }
-
-  const subjectParts = subject.map(part => part.handle)
-  let subjectString = subjectParts.slice(0, subjectParts.length - 2).join(', ')
-  subjectString = `${subjectString} and ${subjectParts[subjectParts.length - 1]}`
-  return subjectString
-}
-
 function formatQuestion(question, {questionNumber}) {
-  const subjectString = formatSubject(question.subject)
-  return `
-${questionNumber}. Answer the following question about ${subjectString}:
-${question.body}
-`
+  let questionText = `*Q${questionNumber}*: ${question.body}`
+  if (question.responseIntructions) {
+    questionText = `${questionText}\n\n${question.responseIntructions}`
+  }
+  return questionText
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {

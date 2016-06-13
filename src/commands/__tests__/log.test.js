@@ -51,7 +51,7 @@ describe(testContext(__filename), function () {
       expect(this.notifications[0]).to.match(/loading.+retrospective/i)
     } */)
 
-    it('notifies that the retrospective question is being loaded when requested', function () {
+    it('prints the question when given a number', function () {
       nock('https://game.learnersguild.test')
         .post('/graphql')
         .reply(200, {data: {
@@ -59,7 +59,8 @@ describe(testContext(__filename), function () {
             id: '99ede319-882f-4dc8-81e2-be43f891a1ba',
             subjectType: 'player',
             responseType: 'text',
-            body: 'What is one thing this player did well?',
+            responseIntructions: 'these are the instructions',
+            body: 'this is the question body',
             subject: {
               id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
               name: 'Rosemarie Kub',
@@ -70,7 +71,8 @@ describe(testContext(__filename), function () {
 
       const {lgJWT, lgPlayer} = this
       return this.invoke(['-rq', '1'], this.notify, {lgJWT, lgPlayer}).then(() => {
-        expect(this.notifications).to.match(/What is one thing this player did well?/i)
+        expect(this.notifications).to.match(/this is the question body/i)
+        expect(this.notifications).to.match(/these are the instructions/i)
       })
     })
 
