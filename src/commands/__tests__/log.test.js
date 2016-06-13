@@ -155,7 +155,7 @@ describe(testContext(__filename), function () {
         .catch(error => done(error))
     })
 
-    it.only('notifies of API invocation errors', function (done) {
+    it('notifies of API invocation errors', function (done) {
       nock('https://game.learnersguild.test')
         .post('/graphql')
         .reply(500, 'Internal Server Error')
