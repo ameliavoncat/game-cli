@@ -15,8 +15,13 @@ describe(testContext(__filename), function () {
       this.lgJWT = 'not.a.real.token'
       this.lgPlayer = {id: 'not.a.real.id'}
     })
+
     beforeEach(function () {
       this.notifications = []
+    })
+
+    afterEach(function () {
+      nock.cleanAll()
     })
 
     it('notifies with the usage message when requested', function () {
@@ -35,27 +40,72 @@ describe(testContext(__filename), function () {
         })
     })
 
-    // TODO: enable this test once APIs are ready
-    it('notifies that the retrospective survey being loaded when requested' /* , function () {
-      // nock('https://game.learnersguild.test')
-      //   .post('/graphql')
-      //   .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
+    it('prints all the queations when not given a number', function () {
+      nock('https://game.learnersguild.test')
+        .post('/graphql')
+        .reply(200, {data: {
+          getRetrospectiveSurvey: {
+            questions: [
+              {
+                id: '99ede319-882f-4dc8-81e2-be43f891a111',
+                subjectType: 'player',
+                responseType: 'text',
+                responseIntructions: 'these are the instructions',
+                body: 'this is the question body',
+                subject: {
+                  id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
+                  name: 'Rosemarie Kub',
+                  handle: 'mobile81'
+                }
+              },
+              {
+                id: '99ede319-882f-4dc8-81e2-be43f891a122',
+                subjectType: 'player',
+                responseType: 'text',
+                responseIntructions: 'these are the instructions',
+                body: 'this is the second question body',
+                subject: {
+                  id: '34278883-2e76-42b6-a8aa-fa74a1892faa',
+                  name: 'Trevor Little',
+                  handle: 'tlittle'
+                }
+              },
+            ]
+          }
+        }})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(['-r'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/loading.+retrospective/i)
-    } */)
+      return this.invoke(['-r'], this.notify, {lgJWT, lgPlayer}).then(() => {
+        expect(this.notifications).to.match(/this is the question body/i)
+        expect(this.notifications).to.match(/this is the second question body/i)
+        expect(this.notifications).to.not.match(/these are the instructions/i)
+      })
+    })
 
-    // TODO: enable this test once APIs are ready
-    it('notifies that the retrospective question is being loaded when requested' /* , function () {
-      // nock('https://game.learnersguild.test')
-      //   .post('/graphql')
-      //   .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
+    it('prints the question when given a number', function () {
+      nock('https://game.learnersguild.test')
+        .post('/graphql')
+        .reply(200, {data: {
+          getRetrospectiveSurveyQuestion: {
+            id: '99ede319-882f-4dc8-81e2-be43f891a1ba',
+            subjectType: 'player',
+            responseType: 'text',
+            responseIntructions: 'these are the instructions',
+            body: 'this is the question body',
+            subject: {
+              id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
+              name: 'Rosemarie Kub',
+              handle: 'mobile81'
+            }
+          }
+        }})
 
       const {lgJWT, lgPlayer} = this
-      this.invoke(['-r1'], this.notify, {lgJWT, lgPlayer})
-      expect(this.notifications[0]).to.match(/loading.+question.+1/i)
-    } */)
+      return this.invoke(['-rq', '1'], this.notify, {lgJWT, lgPlayer}).then(() => {
+        expect(this.notifications).to.match(/this is the question body/i)
+        expect(this.notifications).to.match(/these are the instructions/i)
+      })
+    })
 
     it('notifies with a usage hint when two questions are attempted at once', function () {
       const {lgJWT, lgPlayer} = this
@@ -87,7 +137,7 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgPlayer} = this
       return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
         .then(() => {
-          expect(this.notifications[0]).to.match(/logging.+reflection/i)
+          expect(this.notifications[0]).to.match(/reflection\s*logged/i)
         })
     })
 
@@ -113,7 +163,7 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgPlayer} = this
       return this.invoke(['--retro', '--question', '99999999', 'answer'], this.notify, {lgJWT, lgPlayer})
         .then(() => {
-          expect(this.notifications[1]).to.match(/API invocation failed/)
+          expect(this.notifications[0]).to.match(/API invocation failed/)
           done()
         })
         .catch(error => done(error))

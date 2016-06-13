@@ -34,6 +34,11 @@ export default function graphQLFetcher(lgJWT, baseURL, origin = ORIGIN_URL) {
         }
         return resp.json()
       })
-      .then(graphQLResponse => graphQLResponse.data)
+      .then(({errors, data}) => {
+        if (errors) {
+          throw new Error(errors[0].message)
+        }
+        return data
+      })
   }
 }
