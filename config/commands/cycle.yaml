@@ -10,9 +10,9 @@ command:
       description: Tally votes and create project teams.
       usage: launch [options]
     -
-      name: retro
-      description: Initiate retrospective process.
-      usage: retro [options]
+      name: reflect
+      description: Initiate reflection process.
+      usage: reflect [options]
     -
       name: status
       description: Display status information for the cycle.
