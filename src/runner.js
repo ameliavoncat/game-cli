@@ -5,12 +5,14 @@ const LGRC_FILENAME = path.join(process.env.HOME, '.lgrc')
 
 function getUserOptions() {
   try {
-    fs.accessSync(LGRC_FILENAME, fs.R_OK) // will throw if not readable
+    const stats = fs.statSync(LGRC_FILENAME)
+    if (stats.isFile()) {
+      const userOptions = JSON.parse(fs.readFileSync(LGRC_FILENAME).toString())
+      return userOptions
+    }
   } catch (error) {
     return null
   }
-  const userOptions = JSON.parse(fs.readFileSync(LGRC_FILENAME).toString())
-  return userOptions
 }
 
 function run(commandAndArgv) {

@@ -13,12 +13,11 @@ function genCommandMap() {
     .map(filename => path.resolve(commandSrcDir, filename))
   const commands = commandSourceFilenames
     .filter(filename => {
+      const filenameToRequire = filename.match(/\.js$/) ? filename : path.join(filename, 'index.js')
       try {
-        const filenameToRequire = filename.match(/\.js$/) ? filename : path.join(filename, 'index.js')
-        fs.accessSync(filenameToRequire, fs.R_OK)
-        return true
+        return fs.statSync(filenameToRequire, fs.R_OK).isFile()
       } catch (error) {
-        return false
+        return false  // file not found
       }
     })
     .map(filename => require(filename))
