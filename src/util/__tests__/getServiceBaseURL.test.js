@@ -18,7 +18,7 @@ describe(testContext(__filename), function () {
   })
 
   it('returns the .org service when in production', function () {
-    expect(getServiceBaseURL(GAME, 'test')).to.equal('https://game.learnersguild.test')
+    expect(getServiceBaseURL(GAME, 'test')).to.equal('http://game.learnersguild.test')
   })
 
   it('returns the .org service when in production', function () {

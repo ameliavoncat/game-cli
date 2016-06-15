@@ -11,7 +11,7 @@ export default function getServiceBaseURL(serviceName, env = process.env.NODE_EN
     case 'development':
       return `http://${serviceName}.learnersguild.dev`
     case 'test':
-      return `https://${serviceName}.learnersguild.test`
+      return `http://${serviceName}.learnersguild.test`
     default:
       return `https://${serviceName}.learnersguild.org`
   }

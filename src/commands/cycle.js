@@ -40,7 +40,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   if (args._.length === 1) {
     const subcommandFuncs = {
       launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, options),
-      retro: () => handleUpdateCycleStateCommand('RETROSPECTIVE', '🤔  Initiating Retrospective... stand by.', notify, options),
+      reflect: () => handleUpdateCycleStateCommand('REFLECTION', '🤔  Initiating Reflection... stand by.', notify, options),
     }
     return subcommandFuncs[args._[0]]()
   }
