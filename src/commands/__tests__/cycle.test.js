@@ -11,10 +11,14 @@ describe(testContext(__filename), function () {
       this.notify = msg => {
         this.notifications.push(msg)
       }
+      this.formatError = msg => {
+        this.errors.push(msg)
+      }
       this.lgJWT = 'not.a.real.token'
       this.lgUser = {roles: ['moderator']}
     })
     beforeEach(function () {
+      this.errors = []
       this.notifications = []
     })
 
@@ -79,10 +83,10 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(500, 'Internal Server Error')
 
-      const {lgJWT, lgUser} = this
-      this.invoke(['reflect'], this.notify, {lgJWT, lgUser})
+      const {lgJWT, lgUser, formatError} = this
+      this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
         .then(() => {
-          expect(this.notifications[1]).to.match(/API invocation failed/)
+          expect(this.errors.length).to.equal(1)
           done()
         })
         .catch(error => done(error))
