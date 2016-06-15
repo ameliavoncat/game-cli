@@ -55,4 +55,5 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   }
 
   notify(formatMessage('Loading current cycle voting results ...'))
+  return Promise.resolve()
 })

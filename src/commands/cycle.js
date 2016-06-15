@@ -46,4 +46,5 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   }
 
   notify(formatUsage(usage()))
+  return Promise.resolve()
 })
