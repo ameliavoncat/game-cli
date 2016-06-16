@@ -12,7 +12,7 @@ function invokeUpdateCycleStateAPI(state, lgJWT) {
     variables: {state},
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
-    .then(data => data.launchCycle)
+    .then(data => data.updateCycleState)
 }
 
 function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {

@@ -11,9 +11,7 @@ describe(testContext(__filename), function () {
       this.notify = msg => {
         this.notifications.push(msg)
       }
-      this.formatError = msg => {
-        this.errors.push(msg)
-      }
+      this.formatError = msg => `__FMT: ${msg}`
       this.lgJWT = 'not.a.real.token'
       this.lgUser = {roles: ['moderator']}
     })
@@ -55,7 +53,7 @@ describe(testContext(__filename), function () {
     it('notifies that the state is being initiated', function () {
       nock('http://game.learnersguild.test')
         .post('/graphql')
-        .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
+        .reply(200, {data: {updateCycleState: {id: '00000000-1111-2222-3333-444444444444'}}})
 
       const {lgJWT, lgUser} = this
       return this.invoke(['reflect'], this.notify, {lgJWT, lgUser})
@@ -67,7 +65,7 @@ describe(testContext(__filename), function () {
     it('does not notify if the API invocation succeeds', function (done) {
       nock('http://game.learnersguild.test')
         .post('/graphql')
-        .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
+        .reply(200, {data: {updateCycleState: {id: '00000000-1111-2222-3333-444444444444'}}})
 
       const {lgJWT, lgUser} = this
       this.invoke(['launch'], this.notify, {lgJWT, lgUser})
@@ -86,7 +84,21 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgUser, formatError} = this
       this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
         .then(() => {
-          expect(this.errors.length).to.equal(1)
+          expect(this.notifications[1]).to.equal('__FMT: Internal Server Error')
+          done()
+        })
+        .catch(error => done(error))
+    })
+
+    it('notifies of GraphQL invocation errors', function (done) {
+      nock('http://game.learnersguild.test')
+        .post('/graphql')
+        .reply(200, {errors: [{message: 'GraphQL Error'}]})
+
+      const {lgJWT, lgUser, formatError} = this
+      this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
+        .then(() => {
+          expect(this.notifications[1]).to.equal('__FMT: GraphQL Error')
           done()
         })
         .catch(error => done(error))
