@@ -106,7 +106,7 @@ export default class LogRetroCommand {
       .then(() => this.notifyMsg(`Reflection logged for question ${questionNumber}`))
       .catch(error => {
         errorReporter.captureException(error)
-        this.notifyError(`API invocation failed: ${error.message || error}`)
+        this.notifyError(error.message || error)
       })
   }
 }

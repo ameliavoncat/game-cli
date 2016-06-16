@@ -11,6 +11,7 @@ describe(testContext(__filename), function () {
       this.notify = msg => {
         this.notifications.push(msg)
       }
+      this.formatError = msg => `__FMT: ${msg}`
       this.lgJWT = 'not.a.real.token'
       this.lgPlayer = {id: 'not.a.real.id'}
     })
@@ -103,10 +104,24 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(500, 'Internal Server Error')
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgPlayer, formatError} = this
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer, formatError})
         .then(() => {
-          expect(this.notifications[1]).to.match(/API invocation failed/)
+          expect(this.notifications[1]).to.equal('__FMT: Internal Server Error')
+          done()
+        })
+        .catch(error => done(error))
+    })
+
+    it('notifies of GraphQL invocation errors', function (done) {
+      nock('http://game.learnersguild.test')
+        .post('/graphql')
+        .reply(200, {errors: [{message: 'GraphQL Error'}]})
+
+      const {lgJWT, lgPlayer, formatError} = this
+      this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer, formatError})
+        .then(() => {
+          expect(this.notifications[1]).to.equal('__FMT: GraphQL Error')
           done()
         })
         .catch(error => done(error))

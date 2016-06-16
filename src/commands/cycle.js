@@ -12,7 +12,7 @@ function invokeUpdateCycleStateAPI(state, lgJWT) {
     variables: {state},
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
-    .then(data => data.launchCycle)
+    .then(data => data.updateCycleState)
 }
 
 function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
@@ -29,7 +29,7 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
   return invokeUpdateCycleStateAPI(state, lgJWT)
     .catch(error => {
       errorReporter.captureException(error)
-      notify(formatError(`API invocation failed: ${error.message || error}`))
+      notify(formatError(error.message || error))
     })
 }
 
