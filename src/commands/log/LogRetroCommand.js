@@ -35,9 +35,11 @@ export default class LogRetroCommand {
             }
             ... on SinglePartSubjectSurveyQuestion {
               subject { id name handle }
+              response { value }
             }
             ... on MultiPartSubjectSurveyQuestion {
               subject { id name handle }
+              response { value }
             }
           }
         }`,
@@ -59,9 +61,11 @@ export default class LogRetroCommand {
               }
               ... on SinglePartSubjectSurveyQuestion {
                 subject { id name handle }
+                response { value }
               }
               ... on MultiPartSubjectSurveyQuestion {
                 subject { id name handle }
+                response { value }
               }
             }
           }
@@ -79,13 +83,49 @@ export default class LogRetroCommand {
     return questionText
   }
 
+  completedStatusMessage() {
+    return [
+      'Nice work! You\'ve completed 100% of the reflections.',
+      '',
+      'To edit any of your reflections, just log it again before the end of the cycle.',
+    ].join('\n')
+  }
+
+  incompleteStatusMessage(responseCount, questionCount) {
+    return [
+      `You have logged ${responseCount}/${questionCount} of your reflections for this retrospective.` +
+      '  Run `/log -r.` at any time to check your progress.',
+      '',
+      '  To log a reflection, pick a question using the command:',
+      '  `/log -r -q<integer from 1-12>`',
+      '',
+      '  For example:',
+      '  `/log -r -q3` => show question 3 (of 12)',
+      '',
+      '  Then follow the instructions specified in the question to answer.',
+    ].join('\n')
+  }
+
+  statusMessage(survey) {
+    const responseCount = survey.questions.filter(q => q.response).length
+    return responseCount === survey.questions.length ?
+      this.completedStatusMessage() :
+      this.incompleteStatusMessage(responseCount, survey.questions.length)
+  }
+
   printSurvey() {
     return this.invokeGetSurveyAPI()
-      .then(survey =>
-        this.notifyMsg(survey.questions.map(
+      .then(survey => {
+        const questionList = survey.questions.map(
           (question, i) => this.formatQuestion(question, {questionNumber: i + 1, skipInstructions: true})
-        ).join(`\n`))
-      )
+        ).join('\n')
+
+        return this.notifyMsg([
+          this.statusMessage(survey),
+          '',
+          questionList
+        ].join('\n'))
+      })
       .catch(error => {
         errorReporter.captureException(error)
         this.notifyError(`${error.message || error}`)

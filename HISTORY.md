@@ -1,5 +1,8 @@
 # History
 
+#### 0.8.3
+Added status information to `/log --retro` output 
+
 #### 0.8.0
 Changed `/cycle retro` to `/cycle reflect`
 
