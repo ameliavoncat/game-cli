@@ -1,5 +1,8 @@
 # History
 
+#### 0.9.0
+Adding `/cycle init`
+
 #### 0.8.3
 Added status information to `/log --retro` output 
 
