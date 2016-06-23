@@ -1,5 +1,8 @@
 # History
 
+#### 0.9.1
+`/cycle init` wording tweak
+
 #### 0.9.0
 Adding `/cycle init`
 

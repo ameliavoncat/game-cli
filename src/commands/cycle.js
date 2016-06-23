@@ -39,7 +39,7 @@ function handleCycleInitCommand(notify, options) {
       errorReporter.captureException(error)
       notify(formatError(error.message || error))
     })
-    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized`)))
+    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized. Let the voting commence...`)))
 }
 
 function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
