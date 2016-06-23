@@ -6,6 +6,10 @@ command:
   usage: cycle [options] <command>
   commands:
     -
+      name: init
+      description: Create a new Cycle
+      usage: init [options]
+    -
       name: launch
       description: Tally votes and create project teams.
       usage: launch [options]

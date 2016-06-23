@@ -15,9 +15,14 @@ describe(testContext(__filename), function () {
       this.lgJWT = 'not.a.real.token'
       this.lgUser = {roles: ['moderator']}
     })
+
     beforeEach(function () {
       this.errors = []
       this.notifications = []
+    })
+
+    afterEach(function () {
+      nock.cleanAll()
     })
 
     it('notifies with the usage message when requested', function () {
@@ -50,58 +55,81 @@ describe(testContext(__filename), function () {
       ])
     })
 
-    it('notifies that the state is being initiated', function () {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(200, {data: {updateCycleState: {id: '00000000-1111-2222-3333-444444444444'}}})
+    describe('cycle init', function () {
+      it('notifies user on success', function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {createCycle: {cycleNumber: 3}}})
 
-      const {lgJWT, lgUser} = this
-      return this.invoke(['reflect'], this.notify, {lgJWT, lgUser})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/Initiating/)
-        })
+        const {lgJWT, lgUser} = this
+        return this.invoke(['init'], this.notify, {lgJWT, lgUser})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/Cycle #3/i)
+          })
+      })
+      itNotifiesiOnApiErrors(['init'])
     })
 
-    it('does not notify if the API invocation succeeds', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(200, {data: {updateCycleState: {id: '00000000-1111-2222-3333-444444444444'}}})
+    describe('cycle launch', function () {
+      it('does not notify if the API invocation succeeds', function (done) {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {updateCycleState: {id: '00000000-1111-2222-3333-444444444444'}}})
 
-      const {lgJWT, lgUser} = this
-      this.invoke(['launch'], this.notify, {lgJWT, lgUser})
-        .then(() => {
-          expect(this.notifications.length).to.equal(1)
-          done()
-        })
-        .catch(error => done(error))
+        const {lgJWT, lgUser} = this
+        this.invoke(['launch'], this.notify, {lgJWT, lgUser})
+          .then(() => {
+            expect(this.notifications.length).to.equal(1)
+            done()
+          })
+          .catch(error => done(error))
+      })
+      itNotifiesiOnApiErrors(['launch'])
     })
 
-    it('notifies of API invocation errors', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(500, 'Internal Server Error')
+    describe('cycle reflect', function () {
+      it('notifies that the state is being initiated', function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {updateCycleState: {id: '00000000-1111-2222-3333-444444444444'}}})
 
-      const {lgJWT, lgUser, formatError} = this
-      this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
-        .then(() => {
-          expect(this.notifications[1]).to.equal('__FMT: Internal Server Error')
-          done()
-        })
-        .catch(error => done(error))
+        const {lgJWT, lgUser} = this
+        return this.invoke(['reflect'], this.notify, {lgJWT, lgUser})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/Initiating/)
+          })
+      })
+      itNotifiesiOnApiErrors(['reflect'])
     })
 
-    it('notifies of GraphQL invocation errors', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(200, {errors: [{message: 'GraphQL Error'}]})
+    function itNotifiesiOnApiErrors(command) {
+      it('notifies of API invocation errors', function (done) {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(500, 'Internal Server Error')
 
-      const {lgJWT, lgUser, formatError} = this
-      this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
-        .then(() => {
-          expect(this.notifications[1]).to.equal('__FMT: GraphQL Error')
-          done()
-        })
-        .catch(error => done(error))
-    })
+        const {lgJWT, lgUser, formatError} = this
+        this.invoke(command, this.notify, {lgJWT, lgUser, formatError})
+          .then(() => {
+            expect(this.notifications).to.include('__FMT: Internal Server Error')
+            done()
+          })
+          .catch(error => done(error))
+      })
+
+      it('notifies of GraphQL invocation errors', function (done) {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {errors: [{message: 'GraphQL Error'}]})
+
+        const {lgJWT, lgUser, formatError} = this
+        this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
+          .then(() => {
+            expect(this.notifications).to.include('__FMT: GraphQL Error')
+            done()
+          })
+          .catch(error => done(error))
+      })
+    }
   })
 })

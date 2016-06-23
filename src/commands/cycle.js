@@ -15,6 +15,33 @@ function invokeUpdateCycleStateAPI(state, lgJWT) {
     .then(data => data.updateCycleState)
 }
 
+function invokeCreateCycleAPI(lgJWT) {
+  const mutation = {
+    query: 'mutation { createCycle { id cycleNumber } }',
+  }
+  return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
+    .then(data => data.createCycle)
+}
+
+function handleCycleInitCommand(notify, options) {
+  const {
+    lgJWT,
+    lgUser,
+    formatMessage,
+    formatError
+  } = options
+  if (!lgJWT || !lgUser || lgUser.roles.indexOf('moderator') < 0) {
+    return Promise.reject('You are not a moderator.')
+  }
+
+  return invokeCreateCycleAPI(lgJWT)
+    .catch(error => {
+      errorReporter.captureException(error)
+      notify(formatError(error.message || error))
+    })
+    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized`)))
+}
+
 function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
   const {
     lgJWT,
@@ -39,6 +66,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   } = options
   if (args._.length === 1) {
     const subcommandFuncs = {
+      init: () => handleCycleInitCommand(notify, options),
       launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, options),
       reflect: () => handleUpdateCycleStateCommand('REFLECTION', '🤔  Initiating Reflection... stand by.', notify, options),
     }
