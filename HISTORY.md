@@ -1,5 +1,8 @@
 # History
 
+#### 0.9.2
+`/cycle init` error handling bug fix
+
 #### 0.9.1
 `/cycle init` wording tweak
 
@@ -7,7 +10,7 @@
 Adding `/cycle init`
 
 #### 0.8.3
-Added status information to `/log --retro` output 
+Added status information to `/log --retro` output
 
 #### 0.8.0
 Changed `/cycle retro` to `/cycle reflect`
