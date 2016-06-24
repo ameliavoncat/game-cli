@@ -35,11 +35,11 @@ function handleCycleInitCommand(notify, options) {
   }
 
   return invokeCreateCycleAPI(lgJWT)
+    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized. Let the voting commence...`)))
     .catch(error => {
       errorReporter.captureException(error)
       notify(formatError(error.message || error))
     })
-    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized. Let the voting commence...`)))
 }
 
 function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
