@@ -1,5 +1,8 @@
 # History
 
+#### 0.10.0
+`/project set-artifact` added
+
 #### 0.9.2
 `/cycle init` error handling bug fix
 
