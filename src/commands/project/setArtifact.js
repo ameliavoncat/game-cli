@@ -2,16 +2,16 @@ import getServiceBaseURL, {GAME} from '../../util/getServiceBaseURL'
 import errorReporter from '../../util/errorReporter'
 import graphQLFetcher from '../../util/graphQLFetcher'
 
-function invokeSetProjectArtifactURLAPI(lgJWT, projectDescriptor, url) {
+function invokeSetProjectArtifactURLAPI(lgJWT, projectName, url) {
   const mutation = {
     query: `
-mutation($projectDescriptor: String!, $url: URL!) {
-  setProjectArtifactURL(projectDescriptor: $projectDescriptor, url: $url) {
+mutation($projectName: String!, $url: URL!) {
+  setProjectArtifactURL(projectName: $projectName, url: $url) {
     id
   }
 }
     `,
-    variables: {projectDescriptor, url},
+    variables: {projectName, url},
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
     .then(data => data.setProjectArtifactURL)
@@ -32,12 +32,12 @@ export function setProjectArtifactURL(args, notify, options) {
     return Promise.reject(`Invalid command - wrong number of arguments (${args._.length} for 2)`)
   }
 
-  const [projectName, url] = args._
-  const projectDescriptor = projectName.replace(/^#/, '')
-  return invokeSetProjectArtifactURLAPI(lgJWT, projectDescriptor, url)
+  const [projectNameOrChannel, url] = args._
+  const projectName = projectNameOrChannel.replace(/^#/, '')
+  return invokeSetProjectArtifactURLAPI(lgJWT, projectName, url)
     .then(project => {
       if (project.id) {
-        notify(formatMessage(`Thanks! The artifact for #${projectDescriptor} is now set to ${url}.`))
+        notify(formatMessage(`Thanks! The artifact for #${projectName} is now set to ${url}.`))
         return
       }
       const err = 'Expected a project id to be returned, but none was.'
