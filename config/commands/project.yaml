@@ -6,6 +6,14 @@ command:
   usage: project [options] <command>
   commands:
     -
+      name: set-artifact
+      description: Set the artifact for a project.
+      usage: set-artifact <project id> <url>
+      examples:
+        -
+          example: 'project set-artifact #bad-lemurs-12 https://github.com/reactjs/redux'
+          description: 'Set the artifact for the #bad-lemurs-12 project.'
+    -
       name: status
       description: Check status of a project.
       usage: status <id>
