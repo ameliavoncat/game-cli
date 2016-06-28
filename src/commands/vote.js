@@ -38,7 +38,7 @@ function voteForGoals(goalDescriptors, notify, options) {
     notify(formatMessage(`Only 2 goals are allowed, so these were disqualified: ${goalDescriptors.slice(2).join(', ')}`))
   }
 
-  notify(formatMessage(`Validating the goals you voted on: ${goalDescriptors.join(', ')}`))
+  notify(formatMessage(`Processing votes for goals: ${goalDescriptors.join(', ')}`))
   return invokeVoteAPI(lgJWT, goalDescriptors)
     .catch(error => {
       errorReporter.captureException(error)
