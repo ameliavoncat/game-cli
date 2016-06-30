@@ -18,6 +18,9 @@ describe(testContext(__filename), function () {
     beforeEach(function () {
       this.notifications = []
     })
+    afterEach(function () {
+      nock.cleanAll()
+    })
 
     it('notifies with the usage message when requested', function () {
       const {lgJWT, lgPlayer} = this
