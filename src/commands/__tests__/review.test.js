@@ -1,22 +1,22 @@
 /* eslint-env mocha */
 /* global expect, testContext */
-/* eslint-disable prefer-arrow-callback, no-unused-expressions */
+/* eslint-disable prefer-arrow-callback, no-unused-expressions, max-nested-callbacks */
 
 import nock from 'nock'
 
 describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
-      this.invokeProject = require('../../project').invoke
-
-      this.invoke = (argv, notify, options) => this.invokeProject(['set-artifact', ...argv], notify, options)
+      this.invoke = require('../review').invoke
       this.notify = msg => {
         this.notifications.push(msg)
       }
       this.formatError = msg => `__FMT: ${msg}`
+      this.argv = ['#some-project', '--completeness', '89', '--quality', '93']
       this.lgJWT = 'not.a.real.token'
       this.lgPlayer = {id: 'not.a.real.id'}
     })
+
     beforeEach(function () {
       this.notifications = []
     })
@@ -33,48 +33,58 @@ describe(testContext(__filename), function () {
         })
     })
 
-    it('notifies with an error message when too few positional arguments are provided', function () {
+    it('notifies with a usage hint when called with no args', function () {
       const {lgJWT, lgPlayer} = this
-      return this.invoke(['#bad-lemurs-12'], this.notify, {lgJWT, lgPlayer})
+      return this.invoke([], this.notify, {lgJWT, lgPlayer})
         .then(() => {
-          expect(this.notifications[0]).to.match(/wrong number of arguments/)
-        })
-    })
-
-    it('notifies with a warning if too many positional arguments are provided', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['#bad-lemurs-12', '#good-bears-2', 'http://example.com'], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/wrong number of arguments/)
+          expect(this.notifications[0]).to.match(/\-\-help/)
         })
     })
 
     it('notifies with an error message when invoked by a non-player', function () {
       const {lgJWT} = this
       return Promise.all([
-        this.invoke(['#bad-lemurs-12', 'http://example.com/'], this.notify, {lgJWT, lgPlayer: null})
+        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: null})
           .then(() => {
             expect(this.notifications[0]).to.match(/not a player/)
           }),
-        this.invoke(['#bad-lemurs-12', 'http://example.com/'], this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
+        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
           .then(() => {
             expect(this.notifications[1]).to.match(/not a player/)
           })
       ])
     })
 
-    it('notifies with a thank you message when the API invocation succeeds', function (done) {
+    it('notifies that completeness and quality have been recorded', function () {
       nock('http://game.learnersguild.test')
         .post('/graphql')
-        .reply(200, {data: {setProjectArtifactURL: {id: '00000000-1111-2222-3333-444444444444'}}})
+        .reply(200, {data: {saveProjectReviewCLISurveyResponses: {createdIds: [
+          '00000000-1111-2222-3333-444444444444',
+          '55555555-6666-7777-8888-999999999999',
+        ]}}})
 
       const {lgJWT, lgPlayer} = this
-      return this.invoke(['#bad-lemurs-12', 'http://example.com/'], this.notify, {lgJWT, lgPlayer})
+      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
         .then(() => {
-          expect(this.notifications[0]).to.match(/Thanks! The artifact for .+ is now set to .+/)
-          done()
+          expect(this.notifications[0]).to.match(/completeness and quality scores captured/i)
         })
-        .catch(err => done(err))
+    })
+
+    const scoreNames = ['quality', 'completeness']
+    scoreNames.forEach(function (scoreName) {
+      it(`notifies that ${scoreName} has been recorded`, function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {createdIds: [
+            '00000000-1111-2222-3333-444444444444',
+          ]}})
+
+        const {lgJWT, lgPlayer} = this
+        return this.invoke(['#some-project', `--${scoreName}`, '89'], this.notify, {lgJWT, lgPlayer})
+          .then(() => {
+            expect(this.notifications[0]).to.match(new RegExp(`${scoreName} score captured`, 'i'))
+          })
+      })
     })
 
     it('notifies of API invocation errors', function (done) {
@@ -83,12 +93,12 @@ describe(testContext(__filename), function () {
         .reply(500, 'Internal Server Error')
 
       const {lgJWT, lgPlayer, formatError} = this
-      return this.invoke(['#bad-lemurs-12', 'http://example.com/'], this.notify, {lgJWT, lgPlayer, formatError})
+      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer, formatError})
         .then(() => {
           expect(this.notifications[0]).to.equal('__FMT: Internal Server Error')
           done()
         })
-        .catch(err => done(err))
+        .catch(error => done(error))
     })
 
     it('notifies of GraphQL invocation errors', function (done) {
@@ -97,12 +107,12 @@ describe(testContext(__filename), function () {
         .reply(200, {errors: [{message: 'GraphQL Error'}]})
 
       const {lgJWT, lgPlayer, formatError} = this
-      this.invoke(['#bad-lemurs-12', 'http://example.com/'], this.notify, {lgJWT, lgPlayer, formatError})
+      this.invoke(this.argv, this.notify, {lgJWT, lgPlayer, formatError})
         .then(() => {
           expect(this.notifications[0]).to.equal('__FMT: GraphQL Error')
           done()
         })
-        .catch(err => done(err))
+        .catch(error => done(error))
     })
   })
 })
