@@ -1,5 +1,8 @@
 # History
 
+#### 0.11.0
+`/review` added
+
 #### 0.10.0
 `/project set-artifact` added
 
