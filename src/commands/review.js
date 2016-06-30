@@ -44,11 +44,11 @@ function handleProjectReview(lgJWT, args, {msg}) {
     responseParams: [args[questionName]]
   }))
 
-  return invokesaveProjectReviewCLISurveyResponsesAPI(lgJWT, projectName, responses)
+  return invokeSaveProjectReviewCLISurveyResponsesAPI(lgJWT, projectName, responses)
     .then(() => msg(projectReviewRecordedSuccessMessage(projectName, args)))
 }
 
-function invokesaveProjectReviewCLISurveyResponsesAPI(lgJWT, projectName, responses) {
+function invokeSaveProjectReviewCLISurveyResponsesAPI(lgJWT, projectName, responses) {
   const mutation = {
     query: `
 mutation($projectName: String!, $responses: [CLINamedSurveyResponse]!) {
