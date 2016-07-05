@@ -34,6 +34,14 @@ describe(testContext(__filename), function () {
         })
     })
 
+    it('notifies with a usage hint when not logging reflections', function () {
+      const {lgJWT, lgPlayer} = this
+      return this.invoke([], this.notify, {lgJWT, lgPlayer})
+        .then(() => {
+          expect(this.notifications[0]).to.match(/\-\-help/)
+        })
+    })
+
     it('notifies with an error message if action is invalid', function () {
       const {lgJWT, lgUser} = this
       return this.invoke(['INVALID_ACTION'], this.notify, {lgJWT, lgUser})

@@ -36,9 +36,9 @@ function handleCycleInitCommand(notify, options) {
 
   return invokeCreateCycleAPI(lgJWT)
     .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized. Let the voting commence...`)))
-    .catch(error => {
-      errorReporter.captureException(error)
-      notify(formatError(error.message || error))
+    .catch(err => {
+      errorReporter.captureException(err)
+      notify(formatError(err.message || err))
     })
 }
 
@@ -54,16 +54,13 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
   }
   notify(formatMessage(statusMsg))
   return invokeUpdateCycleStateAPI(state, lgJWT)
-    .catch(error => {
-      errorReporter.captureException(error)
-      notify(formatError(error.message || error))
+    .catch(err => {
+      errorReporter.captureException(err)
+      notify(formatError(err.message || err))
     })
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
-  const {
-    formatUsage,
-  } = options
   if (args._.length === 1) {
     const subcommandFuncs = {
       init: () => handleCycleInitCommand(notify, options),
@@ -73,6 +70,5 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     return subcommandFuncs[args._[0]]()
   }
 
-  notify(formatUsage(usage()))
-  return Promise.resolve()
+  return Promise.reject('Invalid arguments. Try --help for usage.')
 })
