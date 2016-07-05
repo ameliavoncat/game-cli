@@ -16,7 +16,7 @@ command:
   examples:
     -
       example: 'review #fantastic-falcon'
-      description: Show review status and atrifact URL for the fantastic-falcon project.
+      description: Show review status and artifact URL for the fantastic-falcon project.
     -
       example: 'review #fantastic-falcon --completeness 89 --quality 93'
       description: Rate the completeness and quality of the fantastic-falcon project.
