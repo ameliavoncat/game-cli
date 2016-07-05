@@ -8,6 +8,7 @@ describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
       this.invoke = require('../cycle').invoke
+
       this.notify = msg => {
         this.notifications.push(msg)
       }
@@ -67,7 +68,7 @@ describe(testContext(__filename), function () {
             expect(this.notifications[0]).to.match(/Cycle #3/i)
           })
       })
-      itNotifiesiOnApiErrors(['init'])
+      itNotifiesOnAPIErrors(['init'])
     })
 
     describe('cycle launch', function () {
@@ -82,9 +83,9 @@ describe(testContext(__filename), function () {
             expect(this.notifications.length).to.equal(1)
             done()
           })
-          .catch(error => done(error))
+          .catch(err => done(err))
       })
-      itNotifiesiOnApiErrors(['launch'])
+      itNotifiesOnAPIErrors(['launch'])
     })
 
     describe('cycle reflect', function () {
@@ -99,10 +100,10 @@ describe(testContext(__filename), function () {
             expect(this.notifications[0]).to.match(/Initiating/)
           })
       })
-      itNotifiesiOnApiErrors(['reflect'])
+      itNotifiesOnAPIErrors(['reflect'])
     })
 
-    function itNotifiesiOnApiErrors(command) {
+    function itNotifiesOnAPIErrors(command) {
       it('notifies of API invocation errors', function (done) {
         nock('http://game.learnersguild.test')
           .post('/graphql')
@@ -114,7 +115,7 @@ describe(testContext(__filename), function () {
             expect(this.notifications).to.include('__FMT: Internal Server Error')
             done()
           })
-          .catch(error => done(error))
+          .catch(err => done(err))
       })
 
       it('notifies of GraphQL invocation errors', function (done) {
@@ -128,7 +129,7 @@ describe(testContext(__filename), function () {
             expect(this.notifications).to.include('__FMT: GraphQL Error')
             done()
           })
-          .catch(error => done(error))
+          .catch(err => done(err))
       })
     }
   })
