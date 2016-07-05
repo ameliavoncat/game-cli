@@ -1,5 +1,9 @@
 # History
 
+#### 0.11.1
+- cycle: don't print help unless asked for (fixes #37)
+- fix typo (fixes #45)
+
 #### 0.11.0
 `/review` added
 
