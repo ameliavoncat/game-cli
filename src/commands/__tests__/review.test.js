@@ -25,6 +25,89 @@ describe(testContext(__filename), function () {
       nock.cleanAll()
     })
 
+    describe('getting review status', function () {
+      beforeEach(function () {
+        this.argv = ['#some-project']
+      })
+
+      it('displays the current stats when review in progress', function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {getProjectReviewSurveyStatus: {
+            project: {artifactURL: 'http://artifact.example.com'},
+            completed: false,
+            responses: [
+              {questionName: 'completeness', response: {value: 8}},
+            ]
+          }}})
+
+        const {lgJWT, lgPlayer} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/completeness:\s+`8`/i)
+            expect(this.notifications[0]).to.match(/quality:\s+N\/A/i)
+            expect(this.notifications[0]).to.match(/artifact\.example\.com/)
+          })
+      })
+
+      it("displays a message about a missing artifactURL if it's missing", function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {getProjectReviewSurveyStatus: {
+            project: {artifactURL: undefined},
+            completed: false,
+            responses: [
+              {questionName: 'completeness', response: {value: 8}},
+            ]
+          }}})
+
+        const {lgJWT, lgPlayer} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/artifact URL .* has not been set/i)
+          })
+      })
+
+      it('displays the status without the artifact when the review is completed', function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {getProjectReviewSurveyStatus: {
+            project: {artifactURL: 'http://artifact.example.com'},
+            completed: true,
+            responses: [
+              {questionName: 'completeness', response: {value: 8}},
+              {questionName: 'quality', response: {value: 9}},
+            ]
+          }}})
+
+        const {lgJWT, lgPlayer} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/completeness:\s+`8`/i)
+            expect(this.notifications[0]).to.match(/quality:\s+`9`/i)
+            expect(this.notifications[0]).to.not.match(/artifact\.example\.com/)
+          })
+      })
+
+      it('displays the status without the responses when the review has not been started', function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {getProjectReviewSurveyStatus: {
+            project: {artifactURL: 'http://artifact.example.com'},
+            completed: false,
+            responses: [],
+          }}})
+
+        const {lgJWT, lgPlayer} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+          .then(() => {
+            expect(this.notifications[0]).not.to.match(/completeness:/i)
+            expect(this.notifications[0]).not.to.match(/quality:/i)
+            expect(this.notifications[0]).to.match(/artifact\.example\.com/)
+          })
+      })
+    })
+
     it('notifies with the usage message when requested', function () {
       const {lgJWT, lgPlayer} = this
       return this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
@@ -62,6 +145,16 @@ describe(testContext(__filename), function () {
           '00000000-1111-2222-3333-444444444444',
           '55555555-6666-7777-8888-999999999999',
         ]}}})
+      nock('http://game.learnersguild.test')
+        .post('/graphql')
+        .reply(200, {data: {getProjectReviewSurveyStatus: {
+          project: {artifactURL: 'http://artifact.example.com'},
+          completed: true,
+          responses: [
+            {questionName: 'completeness', response: {value: 8}},
+            {questionName: 'quality', response: {value: 9}},
+          ]
+        }}})
 
       const {lgJWT, lgPlayer} = this
       return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
@@ -78,6 +171,15 @@ describe(testContext(__filename), function () {
           .reply(200, {data: {createdIds: [
             '00000000-1111-2222-3333-444444444444',
           ]}})
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {getProjectReviewSurveyStatus: {
+            project: {artifactURL: 'http://artifact.example.com'},
+            completed: false,
+            responses: [
+              {questionName: scoreName, response: {value: 89}},
+            ]
+          }}})
 
         const {lgJWT, lgPlayer} = this
         return this.invoke(['#some-project', `--${scoreName}`, '89'], this.notify, {lgJWT, lgPlayer})
