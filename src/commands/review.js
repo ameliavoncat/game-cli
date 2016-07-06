@@ -83,9 +83,9 @@ function projectReviewRecordedSuccessMessage(projectName, args, completed) {
   }
 
   if (completed) {
-    msg += 'Review is complete. Thank you for your input.'
+    msg += ' Review is complete. Thank you for your input.'
   } else {
-    msg += 'Review is not yet complete.'
+    msg += ' Review is not yet complete.'
   }
   return msg
 }
