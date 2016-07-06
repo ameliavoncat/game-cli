@@ -1,5 +1,9 @@
 # History
 
+#### 0.12.0
+- Added support for getting project review status info via `/review #project-name`
+- Added status info to the output when you submit a project review.
+
 #### 0.11.1
 - cycle: don't print help unless asked for (fixes #37)
 - fix typo (fixes #45)
