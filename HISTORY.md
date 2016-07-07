@@ -1,7 +1,8 @@
 # History
 
 #### 0.13.0
-Added support for specifying project name in `/log` commands
+- Added support for specifying project name in `/log` commands
+- Upgrading to subcli 0.2.2 and making use of the `commandPrefix` and `maxWidth` options.
 
 #### 0.12.0
 - Added support for getting project review status info via `/review #project-name`
