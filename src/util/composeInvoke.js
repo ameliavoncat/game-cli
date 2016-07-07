@@ -6,6 +6,11 @@ const PROMISE_EXPECTATION_MESSAGE = "Warning: invoke function passed to composeI
 export default function composeInvoke(parse, usage, invokeFn) {
   assertFunctions({parse, usage, invokeFn})
   return (argv, notify, options = {}) => {
+    const {
+      commandPrefix,
+      maxWidth,
+    } = options
+    const subcliOpts = {commandPrefix, maxWidth}
     const opts = Object.assign({}, defaultInvokeOptions, options)
     const {
       formatMessage,
@@ -15,12 +20,12 @@ export default function composeInvoke(parse, usage, invokeFn) {
     let args
     try {
       assertFunctions({notify, formatMessage, formatError, formatUsage})
-      args = parse(argv)
-    } catch (error) {
-      notify(formatError(error.message || error))
+      args = parse(argv, subcliOpts)
+    } catch (err) {
+      notify(formatError(err.message || err))
       return Promise.resolve()
     }
-    const usageText = usage(args)
+    const usageText = usage(args, subcliOpts)
     if (usageText) {
       notify(formatUsage(usageText))
       return Promise.resolve()
@@ -31,10 +36,10 @@ export default function composeInvoke(parse, usage, invokeFn) {
       if (typeof promise.then !== 'function') {
         console.error(PROMISE_EXPECTATION_MESSAGE)
       }
-      return promise.catch(error => {
-        notify(formatError(error.message || error))
+      return promise.catch(err => {
+        notify(formatError(err.message || err))
       })
-    } catch (error) {
+    } catch (err) {
       console.log(PROMISE_EXPECTATION_MESSAGE)
     }
   }

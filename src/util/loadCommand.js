@@ -33,7 +33,7 @@ export default function loadCommand(commandName) {
   commandDescriptor = filterOutInactiveSubcommandDescriptors(commandDescriptor)
   return {
     commandDescriptor,
-    parse: argv => parseFor(commandDescriptor, argv),
-    usage: (args = null) => usageFor(commandDescriptor, args),
+    parse: (argv, opts = {}) => parseFor(commandDescriptor, argv, opts),
+    usage: (args = null, opts = {}) => usageFor(commandDescriptor, args, opts),
   }
 }
