@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/game-cli",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib",
   "scripts": {
@@ -30,7 +30,7 @@
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
     "raven": "^0.11.0",
-    "subcli": "^0.1.5",
+    "subcli": "^0.2.2",
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
