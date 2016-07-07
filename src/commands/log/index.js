@@ -15,16 +15,17 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   }
   if (args.retro) {
     const retro = new LogRetroCommand(lgJWT, notify, formatMessage, formatError)
+    const projectName = args.project && args.project.replace(/^#/, '')
 
     if (typeof args.question === 'string' && args.question.match(/^\d+$/)) {
       const questionNumber = parseInt(args.question, 10)
       const responseParams = args._
       if (responseParams.length === 0) {
-        return retro.printSurveyQuestion(questionNumber)
+        return retro.printSurveyQuestion(questionNumber, projectName)
       }
-      return retro.logReflection(questionNumber, responseParams)
+      return retro.logReflection(questionNumber, responseParams, projectName)
     }
-    return retro.printSurvey()
+    return retro.printSurvey(projectName)
   }
   return Promise.reject('Invalid arguments. Try --help for usage.')
 })
