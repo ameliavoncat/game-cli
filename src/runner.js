@@ -17,7 +17,7 @@ function getUserOptions() {
 
 function run(commandAndArgv) {
   process.env.APP_BASE_URL = 'https://game-cli.learnersguild.org'
-  const options = getUserOptions()
+  const options = Object.assign({}, getUserOptions(), {maxWidth: process.stdout.columns})
   if (!options) {
     console.error(`*** Error: No Learners Guild RC file found in ${LGRC_FILENAME} -- try creating one.`)
     return Promise.resolve(1)
