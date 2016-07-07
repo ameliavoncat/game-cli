@@ -14,6 +14,10 @@ command:
       name: question
       abbr: q
       help: Show a question using its index. Provide a response argument to log a response for the question.
+    -
+      name: project
+      abbr: p
+      help: Only required if you are working on multiple projects in the same cycle.
   examples:
     -
       example: log --retro
@@ -21,6 +25,9 @@ command:
     -
       example: log -r -q2
       description: Show retrospective question with index 2.
+    -
+      example: 'log -r -q2 --project #fancy-dingo "So far so good"'
+      description: 'Respond to retrospective question 2 for the #fancy-dingo project'
     -
       example: log -r -q2 "So far so good"
       description: Respond to retrospective question 2 with a message.

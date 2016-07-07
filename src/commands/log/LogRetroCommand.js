@@ -9,26 +9,26 @@ export default class LogRetroCommand {
     this.notifyError = err => notify(formatError(err))
   }
 
-  invokeResponseAPI(questionNumber, responseParams) {
+  invokeResponseAPI(questionNumber, responseParams, projectName) {
     const mutation = {
       query: `
-        mutation($response: CLISurveyResponse!) {
-          saveRetrospectiveCLISurveyResponse(response: $response) {
+        mutation($response: CLISurveyResponse!, $projectName: String) {
+          saveRetrospectiveCLISurveyResponse(response: $response, projectName: $projectName) {
             createdIds
           }
         }
       `,
-      variables: {response: {questionNumber, responseParams}},
+      variables: {response: {questionNumber, responseParams}, projectName},
     }
     return this.runGraphQLQuery(mutation)
       .then(data => data.saveRetrospectiveCLISurveyResponse)
   }
 
-  invokeSurveyQuestionAPI(questionNumber) {
+  invokeSurveyQuestionAPI(questionNumber, projectName) {
     const query = {
       query:
-        `query($questionNumber: Int!) {
-          getRetrospectiveSurveyQuestion(questionNumber: $questionNumber) {
+        `query($questionNumber: Int!, $projectName: String) {
+          getRetrospectiveSurveyQuestion(questionNumber: $questionNumber, projectName: $projectName) {
             ... on SurveyQuestionInterface {
               id subjectType responseType body
               responseIntructions
@@ -43,17 +43,17 @@ export default class LogRetroCommand {
             }
           }
         }`,
-      variables: {questionNumber},
+      variables: {questionNumber, projectName},
     }
     return this.runGraphQLQuery(query)
       .then(data => data.getRetrospectiveSurveyQuestion)
   }
 
-  invokeGetSurveyAPI() {
+  invokeGetSurveyAPI(projectName) {
     const query = {
       query:
-        `query {
-          getRetrospectiveSurvey {
+        `query($projectName: String) {
+          getRetrospectiveSurvey(projectName: $projectName) {
             questions {
               ... on SurveyQuestionInterface {
                 id subjectType responseType body
@@ -70,6 +70,7 @@ export default class LogRetroCommand {
             }
           }
         }`,
+      variables: {projectName}
     }
     return this.runGraphQLQuery(query)
       .then(data => data.getRetrospectiveSurvey)
@@ -113,8 +114,8 @@ export default class LogRetroCommand {
       this.incompleteStatusMessage(responseCount, survey.questions.length)
   }
 
-  printSurvey() {
-    return this.invokeGetSurveyAPI()
+  printSurvey(projectName) {
+    return this.invokeGetSurveyAPI(projectName)
       .then(survey => {
         const questionList = survey.questions.map(
           (question, i) => this.formatQuestion(question, {questionNumber: i + 1, skipInstructions: true})
@@ -132,8 +133,8 @@ export default class LogRetroCommand {
       })
   }
 
-  printSurveyQuestion(questionNumber) {
-    return this.invokeSurveyQuestionAPI(questionNumber)
+  printSurveyQuestion(questionNumber, projectName) {
+    return this.invokeSurveyQuestionAPI(questionNumber, projectName)
       .then(question => this.notifyMsg(this.formatQuestion(question, {questionNumber})))
       .catch(error => {
         errorReporter.captureException(error)
@@ -141,8 +142,8 @@ export default class LogRetroCommand {
       })
   }
 
-  logReflection(questionNumber, responseParams) {
-    return this.invokeResponseAPI(questionNumber, responseParams)
+  logReflection(questionNumber, responseParams, projectName) {
+    return this.invokeResponseAPI(questionNumber, responseParams, projectName)
       .then(() => this.notifyMsg(`Reflection logged for question ${questionNumber}`))
       .catch(error => {
         errorReporter.captureException(error)
