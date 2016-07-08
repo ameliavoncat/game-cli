@@ -4,10 +4,15 @@
 
 import nock from 'nock'
 
+import {
+  notifiesWithUsageMessageForDashH,
+} from '../../../test/commonTests'
+
 describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
       this.invoke = require('../vote').invoke
+
       this.notify = msg => {
         this.notifications.push(msg)
       }
@@ -22,13 +27,7 @@ describe(testContext(__filename), function () {
       nock.cleanAll()
     })
 
-    it('notifies with the usage message when requested', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/Usage:/)
-        })
-    })
+    it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
 
     it('notifies with an error message when too few goal descriptors are provided', function () {
       const {lgJWT, lgPlayer} = this
@@ -99,7 +98,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications.length).to.equal(1)
           done()
         })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
 
     it('notifies of API invocation errors', function (done) {
@@ -113,7 +112,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications[1]).to.equal('__FMT: Internal Server Error')
           done()
         })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
 
     it('notifies of GraphQL invocation errors', function (done) {
@@ -127,7 +126,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications[1]).to.equal('__FMT: GraphQL Error')
           done()
         })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
   })
 })

@@ -4,6 +4,11 @@
 
 import nock from 'nock'
 
+import {
+  notifiesWithUsageMessageForDashH,
+  notifiesWithUsageHintForInvalidArgs,
+} from '../../../test/commonTests'
+
 describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
@@ -26,21 +31,8 @@ describe(testContext(__filename), function () {
       nock.cleanAll()
     })
 
-    it('notifies with the usage message when requested', function () {
-      const {lgJWT, lgUser} = this
-      return this.invoke(['-h'], this.notify, {lgJWT, lgUser})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/Usage:/)
-        })
-    })
-
-    it('notifies with a usage hint when not logging reflections', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke([], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/\-\-help/)
-        })
-    })
+    it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
+    it('notifies with a usage hint when no args are passed', notifiesWithUsageHintForInvalidArgs([]))
 
     it('notifies with an error message if action is invalid', function () {
       const {lgJWT, lgUser} = this
