@@ -4,3 +4,10 @@ command:
   name: vote
   description: vote-rank goals for the next cycle
   usage: 'vote [options] [<issue # or url> <issue # or url>]'
+  examples:
+    -
+      example: vote 23 44
+      description: Vote for goals with IDs 23 and 44.
+    -
+      example: vote --help
+      description: Get help with voting.

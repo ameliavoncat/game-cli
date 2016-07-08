@@ -22,3 +22,10 @@ command:
       description: Display status information for the cycle.
       usage: status [options]
       _inactive: true
+  examples:
+    -
+      example: cycle init --help
+      description: Get help on initializing a cycle.
+    -
+      example: cycle reflect
+      description: Start the reflection (retrospective and review) process for the current cycle.

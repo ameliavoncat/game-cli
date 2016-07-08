@@ -8,7 +8,7 @@ command:
     -
       name: set-artifact
       description: Set the artifact for a project.
-      usage: set-artifact <project id> <url>
+      usage: set-artifact [options] <project id> <url>
       examples:
         -
           example: 'project set-artifact #bad-lemurs-12 https://github.com/reactjs/redux'
@@ -16,7 +16,7 @@ command:
     -
       name: status
       description: Check status of a project.
-      usage: status <id>
+      usage: status [options] <id>
       _inactive: true
       examples:
         -
@@ -25,7 +25,7 @@ command:
     -
       name: show
       description: Show a particular project.
-      usage: show <id>
+      usage: show [options] <id>
       _inactive: true
       examples:
         -
@@ -34,10 +34,17 @@ command:
     -
       name: list
       description: List all active projects.
-      usage: list
+      usage: list [options]
       _inactive: true
     -
       name: search
       description: Search for projects by title.
-      usage: search <query>
+      usage: search [options] <query>
       _inactive: true
+  examples:
+    -
+      example: project set-artifact --help
+      description: Get help on setting a project artifact.
+    -
+      example: 'project set-artifact #bad-lemurs-12 https://github.com/reactjs/redux'
+      description: 'Set the artifact for the #bad-lemurs-12 project.'

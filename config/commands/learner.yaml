@@ -8,7 +8,7 @@ command:
     -
       name: status
       description: Check status of a learner.
-      usage: status [<@handle>]
+      usage: status [options] [<@handle>]
       _inactive: true
       examples:
         -
@@ -20,10 +20,17 @@ command:
     -
       name: play
       description: Activate learner for current cycle.
-      usage: play <@handle>
+      usage: play [options] <@handle>
       _inactive: true
     -
       name: pause
       description: Deactivate learner for current cycle.
-      usage: pause <@handle>
+      usage: pause [options] <@handle>
       _inactive: true
+  examples:
+    -
+      example: learner status
+      description: View your own status.
+    -
+      example: learner pause --help
+      description: Get help on pausing game play.
