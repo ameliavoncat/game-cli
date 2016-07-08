@@ -7,7 +7,8 @@ import nock from 'nock'
 describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
-      this.invoke = require('../log').invoke
+      this.invoke = require('../index').invoke
+
       this.notify = msg => {
         this.notifications.push(msg)
       }
@@ -223,7 +224,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications.length).to.equal(1)
           done()
         })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
 
     it('notifies of API invocation errors', function (done) {
@@ -237,7 +238,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications[0]).to.equal('__FMT: Internal Server Error')
           done()
         })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
 
     it('notifies of GraphQL invocation errors', function (done) {
@@ -251,7 +252,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications[0]).to.equal('__FMT: GraphQL Error')
           done()
         })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
   })
 })
