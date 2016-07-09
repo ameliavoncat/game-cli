@@ -8,6 +8,8 @@ import {
   notifiesWithUsageMessageForDashH,
   notifiesWithUsageHintForInvalidArgs,
   notifiesWithErrorIfNotAPlayer,
+  notifiesWithErrorForAPIErrors,
+  notifiesWithErrorForGraphQLErrors,
 } from '../../../../test/commonTests'
 
 describe(testContext(__filename), function () {
@@ -38,6 +40,8 @@ describe(testContext(__filename), function () {
     it('notifies with an error message when invoked by a non-player', function () {
       return notifiesWithErrorIfNotAPlayer(this.argv).bind(this)()
     })
+    it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['--retro', '--question', '99999999', 'answer']))
+    it('notifies of GraphQL invocation errors', notifiesWithErrorForGraphQLErrors(['--retro', '--question', '1', 'answer']))
 
     describe('log -r', function () {
       describe('when survey in progress', function () {
@@ -197,34 +201,6 @@ describe(testContext(__filename), function () {
       return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
         .then(() => {
           expect(this.notifications.length).to.equal(1)
-          done()
-        })
-        .catch(err => done(err))
-    })
-
-    it('notifies of API invocation errors', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(500, 'Internal Server Error')
-
-      const {lgJWT, lgPlayer, formatError} = this
-      return this.invoke(['--retro', '--question', '99999999', 'answer'], this.notify, {lgJWT, lgPlayer, formatError})
-        .then(() => {
-          expect(this.notifications[0]).to.equal('__FMT: Internal Server Error')
-          done()
-        })
-        .catch(err => done(err))
-    })
-
-    it('notifies of GraphQL invocation errors', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(200, {errors: [{message: 'GraphQL Error'}]})
-
-      const {lgJWT, lgPlayer, formatError} = this
-      this.invoke(['--retro', '--question', '1', 'answer'], this.notify, {lgJWT, lgPlayer, formatError})
-        .then(() => {
-          expect(this.notifications[0]).to.equal('__FMT: GraphQL Error')
           done()
         })
         .catch(err => done(err))
