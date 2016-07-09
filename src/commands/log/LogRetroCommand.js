@@ -127,27 +127,27 @@ export default class LogRetroCommand {
           questionList
         ].join('\n'))
       })
-      .catch(error => {
-        errorReporter.captureException(error)
-        this.notifyError(`${error.message || error}`)
+      .catch(err => {
+        errorReporter.captureException(err)
+        this.notifyError(`${err.message || err}`)
       })
   }
 
   printSurveyQuestion(questionNumber, projectName) {
     return this.invokeSurveyQuestionAPI(questionNumber, projectName)
       .then(question => this.notifyMsg(this.formatQuestion(question, {questionNumber})))
-      .catch(error => {
-        errorReporter.captureException(error)
-        this.notifyError(`${error.message || error}`)
+      .catch(err => {
+        errorReporter.captureException(err)
+        this.notifyError(`${err.message || err}`)
       })
   }
 
   logReflection(questionNumber, responseParams, projectName) {
     return this.invokeResponseAPI(questionNumber, responseParams, projectName)
       .then(() => this.notifyMsg(`Reflection logged for question ${questionNumber}`))
-      .catch(error => {
-        errorReporter.captureException(error)
-        this.notifyError(error.message || error)
+      .catch(err => {
+        errorReporter.captureException(err)
+        this.notifyError(err.message || err)
       })
   }
 }
