@@ -4,6 +4,14 @@
 
 import nock from 'nock'
 
+import {
+  notifiesWithUsageMessageForDashH,
+  notifiesWithUsageHintForInvalidArgs,
+  notifiesWithErrorIfNotAModerator,
+  notifiesWithErrorForAPIErrors,
+  notifiesWithErrorForGraphQLErrors,
+} from '../../../test/commonTests'
+
 describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
@@ -26,21 +34,9 @@ describe(testContext(__filename), function () {
       nock.cleanAll()
     })
 
-    it('notifies with the usage message when requested', function () {
-      const {lgJWT, lgUser} = this
-      return this.invoke(['-h'], this.notify, {lgJWT, lgUser})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/Usage:/)
-        })
-    })
-
-    it('notifies with a usage hint when not logging reflections', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke([], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/\-\-help/)
-        })
-    })
+    it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
+    it('notifies with a usage hint when no args are passed', notifiesWithUsageHintForInvalidArgs([]))
+    it('notifies with an error message when invoked by a non-moderator', notifiesWithErrorIfNotAModerator(['launch']))
 
     it('notifies with an error message if action is invalid', function () {
       const {lgJWT, lgUser} = this
@@ -48,20 +44,6 @@ describe(testContext(__filename), function () {
         .then(() => {
           expect(this.notifications[0]).to.match(/no such subcommand/)
         })
-    })
-
-    it('notifies with an error message when invoked by a non-moderator', function () {
-      const {lgJWT} = this
-      return Promise.all([
-        this.invoke(['launch'], this.notify, {lgJWT, lgUser: null})
-          .then(() => {
-            expect(this.notifications[0]).to.match(/not a moderator/)
-          }),
-        this.invoke(['launch'], this.notify, {lgJWT, lgUser: {roles: ['player']}})
-          .then(() => {
-            expect(this.notifications[1]).to.match(/not a moderator/)
-          })
-      ])
     })
 
     describe('cycle init', function () {
@@ -76,7 +58,8 @@ describe(testContext(__filename), function () {
             expect(this.notifications[0]).to.match(/Cycle #3/i)
           })
       })
-      itNotifiesOnAPIErrors(['init'])
+      it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['init']))
+      it('notifies of GraphQL invocation errors', notifiesWithErrorForGraphQLErrors(['init']))
     })
 
     describe('cycle launch', function () {
@@ -93,7 +76,8 @@ describe(testContext(__filename), function () {
           })
           .catch(err => done(err))
       })
-      itNotifiesOnAPIErrors(['launch'])
+      it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['launch']))
+      it('notifies of GraphQL invocation errors', notifiesWithErrorForGraphQLErrors(['launch']))
     })
 
     describe('cycle reflect', function () {
@@ -108,37 +92,8 @@ describe(testContext(__filename), function () {
             expect(this.notifications[0]).to.match(/Initiating/)
           })
       })
-      itNotifiesOnAPIErrors(['reflect'])
+      it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['reflect']))
+      it('notifies of GraphQL invocation errors', notifiesWithErrorForGraphQLErrors(['reflect']))
     })
-
-    function itNotifiesOnAPIErrors(command) {
-      it('notifies of API invocation errors', function (done) {
-        nock('http://game.learnersguild.test')
-          .post('/graphql')
-          .reply(500, 'Internal Server Error')
-
-        const {lgJWT, lgUser, formatError} = this
-        this.invoke(command, this.notify, {lgJWT, lgUser, formatError})
-          .then(() => {
-            expect(this.notifications).to.include('__FMT: Internal Server Error')
-            done()
-          })
-          .catch(err => done(err))
-      })
-
-      it('notifies of GraphQL invocation errors', function (done) {
-        nock('http://game.learnersguild.test')
-          .post('/graphql')
-          .reply(200, {errors: [{message: 'GraphQL Error'}]})
-
-        const {lgJWT, lgUser, formatError} = this
-        this.invoke(['reflect'], this.notify, {lgJWT, lgUser, formatError})
-          .then(() => {
-            expect(this.notifications).to.include('__FMT: GraphQL Error')
-            done()
-          })
-          .catch(err => done(err))
-      })
-    }
   })
 })

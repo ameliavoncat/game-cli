@@ -4,10 +4,19 @@
 
 import nock from 'nock'
 
+import {
+  notifiesWithUsageMessageForDashH,
+  notifiesWithUsageHintForInvalidArgs,
+  notifiesWithErrorIfNotAPlayer,
+  notifiesWithErrorForAPIErrors,
+  notifiesWithErrorForGraphQLErrors,
+} from '../../../../test/commonTests'
+
 describe(testContext(__filename), function () {
   describe('invoke', function () {
     before(function () {
-      this.invoke = require('../log').invoke
+      this.invoke = require('../index').invoke
+
       this.notify = msg => {
         this.notifications.push(msg)
       }
@@ -25,21 +34,14 @@ describe(testContext(__filename), function () {
       nock.cleanAll()
     })
 
-    it('notifies with the usage message when requested', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/Usage:/)
-        })
+    it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
+    it('notifies with a usage hint when not logging reflections', notifiesWithUsageHintForInvalidArgs([]))
+    it('notifies with a usage hint when two questions are attempted at once', notifiesWithUsageHintForInvalidArgs(['-r', '-q1', 'answer1', '-r', '-q2', 'answer2']))
+    it('notifies with an error message when invoked by a non-player', function () {
+      return notifiesWithErrorIfNotAPlayer(this.argv).bind(this)()
     })
-
-    it('notifies with a usage hint when not logging reflections', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke([], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/\-\-help/)
-        })
-    })
+    it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['--retro', '--question', '99999999', 'answer']))
+    it('notifies of GraphQL invocation errors', notifiesWithErrorForGraphQLErrors(['--retro', '--question', '1', 'answer']))
 
     describe('log -r', function () {
       describe('when survey in progress', function () {
@@ -178,28 +180,6 @@ describe(testContext(__filename), function () {
       })
     })
 
-    it('notifies with a usage hint when two questions are attempted at once', function () {
-      const {lgJWT, lgPlayer} = this
-      this.invoke(['-r1', 'answer1', '-r2', 'answer2'], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/\-\-help/)
-        })
-    })
-
-    it('notifies with an error message when invoked by a non-player', function () {
-      const {lgJWT} = this
-      return Promise.all([
-        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: null})
-          .then(() => {
-            expect(this.notifications[0]).to.match(/not a player/)
-          }),
-        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
-          .then(() => {
-            expect(this.notifications[1]).to.match(/not a player/)
-          })
-      ])
-    })
-
     it('notifies that the reflection is being logged', function () {
       nock('http://game.learnersguild.test')
         .post('/graphql')
@@ -223,35 +203,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications.length).to.equal(1)
           done()
         })
-        .catch(error => done(error))
-    })
-
-    it('notifies of API invocation errors', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(500, 'Internal Server Error')
-
-      const {lgJWT, lgPlayer, formatError} = this
-      return this.invoke(['--retro', '--question', '99999999', 'answer'], this.notify, {lgJWT, lgPlayer, formatError})
-        .then(() => {
-          expect(this.notifications[0]).to.equal('__FMT: Internal Server Error')
-          done()
-        })
-        .catch(error => done(error))
-    })
-
-    it('notifies of GraphQL invocation errors', function (done) {
-      nock('http://game.learnersguild.test')
-        .post('/graphql')
-        .reply(200, {errors: [{message: 'GraphQL Error'}]})
-
-      const {lgJWT, lgPlayer, formatError} = this
-      this.invoke(['--retro', '--question', '1', 'answer'], this.notify, {lgJWT, lgPlayer, formatError})
-        .then(() => {
-          expect(this.notifications[0]).to.equal('__FMT: GraphQL Error')
-          done()
-        })
-        .catch(error => done(error))
+        .catch(err => done(err))
     })
   })
 })

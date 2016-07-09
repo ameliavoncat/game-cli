@@ -8,7 +8,7 @@ command:
     -
       name: show
       description: Show a particular goal.
-      usage: show <id>
+      usage: show [options] <id>
       _inactive: true
       examples:
         -
@@ -17,10 +17,17 @@ command:
     -
       name: create
       description: Create a new goal.
-      usage: create [<title>]
+      usage: create [options] [<title>]
       _inactive: true
     -
       name: search
       description: Search for goals by title.
-      usage: search <query>
+      usage: search [options] <query>
       _inactive: true
+  examples:
+    -
+      example: goal show 12
+      description: Show goal with id 12.
+    -
+      example: goal search --help
+      description: Get help on searching for goals.

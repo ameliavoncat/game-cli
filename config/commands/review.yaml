@@ -3,7 +3,7 @@
 command:
   name: review
   description: provide feedback on a project
-  usage: review <project> [options]
+  usage: review [options] <project>
   options:
     -
       name: completeness
