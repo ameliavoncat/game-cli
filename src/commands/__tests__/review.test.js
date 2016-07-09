@@ -7,6 +7,7 @@ import nock from 'nock'
 import {
   notifiesWithUsageMessageForDashH,
   notifiesWithUsageHintForInvalidArgs,
+  notifiesWithErrorIfNotAPlayer,
 } from '../../../test/commonTests'
 
 describe(testContext(__filename), function () {
@@ -29,6 +30,12 @@ describe(testContext(__filename), function () {
 
     afterEach(function () {
       nock.cleanAll()
+    })
+
+    it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
+    it('notifies with a usage hint when called with no args', notifiesWithUsageHintForInvalidArgs([]))
+    it('notifies with an error message when invoked by a non-player', function () {
+      return notifiesWithErrorIfNotAPlayer(this.argv).bind(this)()
     })
 
     describe('getting review status', function () {
@@ -112,23 +119,6 @@ describe(testContext(__filename), function () {
             expect(this.notifications[0]).to.match(/artifact\.example\.com/)
           })
       })
-    })
-
-    it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
-    it('notifies with a usage hint when called with no args', notifiesWithUsageHintForInvalidArgs([]))
-
-    it('notifies with an error message when invoked by a non-player', function () {
-      const {lgJWT} = this
-      return Promise.all([
-        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: null})
-          .then(() => {
-            expect(this.notifications[0]).to.match(/not a player/)
-          }),
-        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
-          .then(() => {
-            expect(this.notifications[1]).to.match(/not a player/)
-          })
-      ])
     })
 
     it('notifies that completeness and quality have been recorded', function () {

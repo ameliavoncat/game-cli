@@ -6,6 +6,7 @@ import nock from 'nock'
 
 import {
   notifiesWithUsageMessageForDashH,
+  notifiesWithErrorIfNotAPlayer,
 } from '../../../test/commonTests'
 
 describe(testContext(__filename), function () {
@@ -28,6 +29,7 @@ describe(testContext(__filename), function () {
     })
 
     it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
+    it('notifies with an error message when invoked by a non-player', notifiesWithErrorIfNotAPlayer(['1', '2']))
 
     it('notifies with an error message when too few goal descriptors are provided', function () {
       const {lgJWT, lgPlayer} = this
@@ -35,20 +37,6 @@ describe(testContext(__filename), function () {
         .then(() => {
           expect(this.notifications[0]).to.match(/exactly 2/)
         })
-    })
-
-    it('notifies with an error message when invoked by a non-player', function () {
-      const {lgJWT} = this
-      return Promise.all([
-        this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: null})
-          .then(() => {
-            expect(this.notifications[0]).to.match(/not a player/)
-          }),
-        this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
-          .then(() => {
-            expect(this.notifications[1]).to.match(/not a player/)
-          })
-      ])
     })
 
     it('notifies with a warning if extra goal descriptors are provided', function () {

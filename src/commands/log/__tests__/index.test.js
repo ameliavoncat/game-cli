@@ -7,6 +7,7 @@ import nock from 'nock'
 import {
   notifiesWithUsageMessageForDashH,
   notifiesWithUsageHintForInvalidArgs,
+  notifiesWithErrorIfNotAPlayer,
 } from '../../../../test/commonTests'
 
 describe(testContext(__filename), function () {
@@ -33,6 +34,10 @@ describe(testContext(__filename), function () {
 
     it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
     it('notifies with a usage hint when not logging reflections', notifiesWithUsageHintForInvalidArgs([]))
+    it('notifies with a usage hint when two questions are attempted at once', notifiesWithUsageHintForInvalidArgs(['-r', '-q1', 'answer1', '-r', '-q2', 'answer2']))
+    it('notifies with an error message when invoked by a non-player', function () {
+      return notifiesWithErrorIfNotAPlayer(this.argv).bind(this)()
+    })
 
     describe('log -r', function () {
       describe('when survey in progress', function () {
@@ -169,28 +174,6 @@ describe(testContext(__filename), function () {
         expect(this.notifications[0]).to.match(/this is the question body/i)
         expect(this.notifications[0]).to.match(/these are the instructions/i)
       })
-    })
-
-    it('notifies with a usage hint when two questions are attempted at once', function () {
-      const {lgJWT, lgPlayer} = this
-      this.invoke(['-r1', 'answer1', '-r2', 'answer2'], this.notify, {lgJWT, lgPlayer})
-        .then(() => {
-          expect(this.notifications[0]).to.match(/\-\-help/)
-        })
-    })
-
-    it('notifies with an error message when invoked by a non-player', function () {
-      const {lgJWT} = this
-      return Promise.all([
-        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: null})
-          .then(() => {
-            expect(this.notifications[0]).to.match(/not a player/)
-          }),
-        this.invoke(this.argv, this.notify, {lgJWT, lgPlayer: {object: 'without id attribute'}})
-          .then(() => {
-            expect(this.notifications[1]).to.match(/not a player/)
-          })
-      ])
     })
 
     it('notifies that the reflection is being logged', function () {

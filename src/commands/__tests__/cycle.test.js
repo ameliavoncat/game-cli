@@ -7,6 +7,7 @@ import nock from 'nock'
 import {
   notifiesWithUsageMessageForDashH,
   notifiesWithUsageHintForInvalidArgs,
+  notifiesWithErrorIfNotAModerator,
 } from '../../../test/commonTests'
 
 describe(testContext(__filename), function () {
@@ -33,6 +34,7 @@ describe(testContext(__filename), function () {
 
     it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
     it('notifies with a usage hint when no args are passed', notifiesWithUsageHintForInvalidArgs([]))
+    it('notifies with an error message when invoked by a non-moderator', notifiesWithErrorIfNotAModerator(['launch']))
 
     it('notifies with an error message if action is invalid', function () {
       const {lgJWT, lgUser} = this
@@ -40,20 +42,6 @@ describe(testContext(__filename), function () {
         .then(() => {
           expect(this.notifications[0]).to.match(/no such subcommand/)
         })
-    })
-
-    it('notifies with an error message when invoked by a non-moderator', function () {
-      const {lgJWT} = this
-      return Promise.all([
-        this.invoke(['launch'], this.notify, {lgJWT, lgUser: null})
-          .then(() => {
-            expect(this.notifications[0]).to.match(/not a moderator/)
-          }),
-        this.invoke(['launch'], this.notify, {lgJWT, lgUser: {roles: ['player']}})
-          .then(() => {
-            expect(this.notifications[1]).to.match(/not a moderator/)
-          })
-      ])
     })
 
     describe('cycle init', function () {
