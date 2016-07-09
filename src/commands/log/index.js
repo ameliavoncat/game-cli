@@ -13,7 +13,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   if (!lgJWT || !lgPlayer || !lgPlayer.id) {
     return Promise.reject('You are not a player in the game.')
   }
-  if (args.retro) {
+  if (args.retro && !Array.isArray(args.question)) {
     const retro = new LogRetroCommand(lgJWT, notify, formatMessage, formatError)
     const projectName = args.project && args.project.replace(/^#/, '')
 
