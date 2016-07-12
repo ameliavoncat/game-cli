@@ -1,6 +1,9 @@
 # History
 
 #### 0.13.2
+- bump subcli to 0.2.3
+
+#### 0.13.2
 - fixup /vote usage
 
 #### 0.13.0
