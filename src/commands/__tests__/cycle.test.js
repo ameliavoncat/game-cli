@@ -42,7 +42,7 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgUser} = this
       return this.invoke(['INVALID_ACTION'], this.notify, {lgJWT, lgUser})
         .then(() => {
-          expect(this.notifications[0]).to.match(/no such subcommand/)
+          expect(this.notifications[0]).to.match(/no such subcommand/i)
         })
     })
 
