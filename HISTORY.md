@@ -1,5 +1,9 @@
 # History
 
+#### 1.0.0
+- add `/retro` command
+- remove `/log` command
+
 #### 0.14.0
 - stop expecting `lgPlayer` -- use `lgUser` and `lgUser.roles`
 
