@@ -111,7 +111,9 @@ query($projectName: String!) {
     completed
     responses {
       questionName
-      response { value }
+      values {
+        value
+      }
     }
   }
 }
@@ -131,7 +133,7 @@ function projectReviewStatusMessage(projectName, status) {
     questionNames.forEach(questionName => {
       const response = status.responses.find(r => r.questionName === questionName)
       if (response) {
-        statusMessage += `  • ${questionName}: \`${response.response.value}\`\n`
+        statusMessage += `  • ${questionName}: \`${response.values[0].value}\`\n`
       } else {
         statusMessage += `  • ${questionName}: N/A\n`
       }

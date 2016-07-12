@@ -3,6 +3,7 @@
 #### 1.0.0
 - add `/retro` command
 - remove `/log` command
+- update `/review` command to match game API changes related to new-retro
 
 #### 0.14.0
 - stop expecting `lgPlayer` -- use `lgUser` and `lgUser.roles`
