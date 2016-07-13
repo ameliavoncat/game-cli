@@ -20,16 +20,16 @@ mutation($projectName: String!, $url: URL!) {
 export function setProjectArtifactURL(args, notify, options) {
   const {
     lgJWT,
-    lgPlayer,
+    lgUser,
     formatMessage,
     formatError
   } = options
 
-  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
+  if (!lgJWT || !lgUser || lgUser.roles.indexOf('player') < 0) {
     return Promise.reject('You are not a player in the game.')
   }
   if (args._.length !== 2) {
-    return Promise.reject(`Invalid command - wrong number of arguments (${args._.length} for 2)`)
+    return Promise.reject(`Invalid command - wrong number of arguments (${args._.length} for 2). Try --help for usage.`)
   }
 
   const [projectNameOrChannel, url] = args._

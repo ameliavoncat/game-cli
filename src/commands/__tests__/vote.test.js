@@ -20,7 +20,7 @@ describe(testContext(__filename), function () {
         this.notifications.push(msg)
       }
       this.lgJWT = 'not.a.real.token'
-      this.lgPlayer = {id: 'not.a.real.id'}
+      this.lgUser = {id: 'not.a.real.id', roles: ['player']}
     })
     beforeEach(function () {
       this.notifications = []
@@ -35,8 +35,8 @@ describe(testContext(__filename), function () {
     it('notifies of GraphQL invocation errors', notifiesWithErrorForGraphQLErrors(['1', '2']))
 
     it('notifies with an error message when too few goal descriptors are provided', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['1'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(['1'], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/exactly 2/)
         })
@@ -47,8 +47,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['1', '2', '3'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(['1', '2', '3'], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/disqualified/)
         })
@@ -59,8 +59,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/Validating/)
         })
@@ -71,8 +71,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/Validating/)
         })
@@ -83,8 +83,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {id: '00000000-1111-2222-3333-444444444444'}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['1', '2'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(['1', '2'], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications.length).to.equal(1)
           done()

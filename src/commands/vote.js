@@ -24,12 +24,12 @@ mutation($goalDescriptors: [String]!) {
 function voteForGoals(goalDescriptors, notify, options) {
   const {
     lgJWT,
-    lgPlayer,
+    lgUser,
     formatMessage,
     formatError
   } = options
-  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
-    return Promise.reject('You are not a player in the game.')
+  if (!lgJWT || !lgUser || (lgUser.roles.indexOf('player') < 0 && lgUser.roles.indexOf('moderator') < 0)) {
+    return Promise.reject('You are not a player or a moderator in the game.')
   }
   if (goalDescriptors.length === 1) {
     return Promise.reject('You must vote for exactly 2 goals.')
@@ -40,9 +40,9 @@ function voteForGoals(goalDescriptors, notify, options) {
 
   notify(formatMessage(`Validating the goals you voted on: ${goalDescriptors.join(', ')}`))
   return invokeVoteAPI(lgJWT, goalDescriptors)
-    .catch(error => {
-      errorReporter.captureException(error)
-      notify(formatError(error.message || error))
+    .catch(err => {
+      errorReporter.captureException(err)
+      notify(formatError(err.message || err))
     })
 }
 

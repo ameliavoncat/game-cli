@@ -12,15 +12,15 @@ describe(testContext(__filename), function () {
       }
       this.formatError = msg => `__FMT: ${msg}`
       this.lgJWT = 'not.a.real.token'
-      this.lgPlayer = {id: 'not.a.real.id'}
+      this.lgUser = {id: 'not.a.real.id', roles: ['player']}
     })
     beforeEach(function () {
       this.notifications = []
     })
 
     it('notifies with the usage message when requested', function () {
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['-h'], this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(['-h'], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/Usage:/)
         })

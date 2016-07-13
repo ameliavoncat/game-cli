@@ -6,11 +6,11 @@ export const {parse, usage, commandDescriptor} = loadCommand('log')
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   const {
     lgJWT,
-    lgPlayer,
+    lgUser,
     formatError,
     formatMessage,
   } = options
-  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
+  if (!lgJWT || !lgUser || lgUser.roles.indexOf('player') < 0) {
     return Promise.reject('You are not a player in the game.')
   }
   if (args.retro && !Array.isArray(args.question)) {
