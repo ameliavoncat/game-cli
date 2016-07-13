@@ -1,6 +1,6 @@
 # History
 
-#### 0.13.4
+#### 0.14.0
 - stop expecting `lgPlayer` -- use `lgUser` and `lgUser.roles`
 
 #### 0.13.3
