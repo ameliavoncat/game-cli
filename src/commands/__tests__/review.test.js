@@ -23,7 +23,7 @@ describe(testContext(__filename), function () {
       this.formatError = msg => `__FMT: ${msg}`
       this.argv = ['#some-project', '--completeness', '89', '--quality', '93']
       this.lgJWT = 'not.a.real.token'
-      this.lgPlayer = {id: 'not.a.real.id'}
+      this.lgUser = {id: 'not.a.real.id', roles: ['player']}
     })
 
     beforeEach(function () {
@@ -62,8 +62,8 @@ describe(testContext(__filename), function () {
             ]
           }}})
 
-        const {lgJWT, lgPlayer} = this
-        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+        const {lgJWT, lgUser} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(/completeness:\s+`8`/i)
             expect(this.notifications[0]).to.match(/quality:\s+N\/A/i)
@@ -82,8 +82,8 @@ describe(testContext(__filename), function () {
             ]
           }}})
 
-        const {lgJWT, lgPlayer} = this
-        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+        const {lgJWT, lgUser} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(/artifact URL .* has not been set/i)
           })
@@ -101,8 +101,8 @@ describe(testContext(__filename), function () {
             ]
           }}})
 
-        const {lgJWT, lgPlayer} = this
-        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+        const {lgJWT, lgUser} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(/completeness:\s+`8`/i)
             expect(this.notifications[0]).to.match(/quality:\s+`9`/i)
@@ -119,8 +119,8 @@ describe(testContext(__filename), function () {
             responses: [],
           }}})
 
-        const {lgJWT, lgPlayer} = this
-        return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+        const {lgJWT, lgUser} = this
+        return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).not.to.match(/completeness:/i)
             expect(this.notifications[0]).not.to.match(/quality:/i)
@@ -147,8 +147,8 @@ describe(testContext(__filename), function () {
           ]
         }}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/completeness and quality scores captured/i)
         })
@@ -172,8 +172,8 @@ describe(testContext(__filename), function () {
             ]
           }}})
 
-        const {lgJWT, lgPlayer} = this
-        return this.invoke(['#some-project', `--${scoreName}`, '89'], this.notify, {lgJWT, lgPlayer})
+        const {lgJWT, lgUser} = this
+        return this.invoke(['#some-project', `--${scoreName}`, '89'], this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(new RegExp(`${scoreName} score captured`, 'i'))
           })

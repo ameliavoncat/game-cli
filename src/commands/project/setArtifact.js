@@ -1,6 +1,7 @@
 import getServiceBaseURL, {GAME} from '../../util/getServiceBaseURL'
 import errorReporter from '../../util/errorReporter'
 import graphQLFetcher from '../../util/graphQLFetcher'
+import {userIsPlayer} from '../../util/userValidation'
 
 function invokeSetProjectArtifactURLAPI(lgJWT, projectName, url) {
   const mutation = {
@@ -20,16 +21,16 @@ mutation($projectName: String!, $url: URL!) {
 export function setProjectArtifactURL(args, notify, options) {
   const {
     lgJWT,
-    lgPlayer,
+    lgUser,
     formatMessage,
     formatError
   } = options
 
-  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
+  if (!lgJWT || !userIsPlayer(lgUser)) {
     return Promise.reject('You are not a player in the game.')
   }
   if (args._.length !== 2) {
-    return Promise.reject(`Invalid command - wrong number of arguments (${args._.length} for 2)`)
+    return Promise.reject(`Invalid command - wrong number of arguments (${args._.length} for 2). Try --help for usage.`)
   }
 
   const [projectNameOrChannel, url] = args._

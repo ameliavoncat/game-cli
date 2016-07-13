@@ -3,6 +3,7 @@ import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
 import composeInvoke from '../util/composeInvoke'
+import {userIsModerator} from '../util/userValidation'
 
 export const {parse, usage, commandDescriptor} = loadCommand('cycle')
 
@@ -30,7 +31,7 @@ function handleCycleInitCommand(notify, options) {
     formatMessage,
     formatError
   } = options
-  if (!lgJWT || !lgUser || lgUser.roles.indexOf('moderator') < 0) {
+  if (!lgJWT || !userIsModerator(lgUser)) {
     return Promise.reject('You are not a moderator.')
   }
 
@@ -49,7 +50,7 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
     formatMessage,
     formatError
   } = options
-  if (!lgJWT || !lgUser || lgUser.roles.indexOf('moderator') < 0) {
+  if (!lgJWT || !userIsModerator(lgUser)) {
     return Promise.reject('You are not a moderator.')
   }
   notify(formatMessage(statusMsg))

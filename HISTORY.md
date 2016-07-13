@@ -1,10 +1,13 @@
 # History
 
-#### 0.13.2
+#### 0.13.4
+- stop expecting `lgPlayer` -- use `lgUser` and `lgUser.roles`
+
+#### 0.13.3
 - bump subcli to 0.2.3
 
 #### 0.13.2
-- fixup /vote usage
+- fixup `/vote` usage
 
 #### 0.13.0
 - Added support for specifying project name in `/log` commands

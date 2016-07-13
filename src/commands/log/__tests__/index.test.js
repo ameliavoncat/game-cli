@@ -23,7 +23,7 @@ describe(testContext(__filename), function () {
       this.formatError = msg => `__FMT: ${msg}`
       this.argv = ['-rq', '1', 'some1:25', 'some2:25', 'some3:25', 'some4:25']
       this.lgJWT = 'not.a.real.token'
-      this.lgPlayer = {id: 'not.a.real.id'}
+      this.lgUser = {id: 'not.a.real.id', roles: ['player']}
     })
 
     beforeEach(function () {
@@ -83,8 +83,8 @@ describe(testContext(__filename), function () {
         })
 
         it('prints all the questions without question instructions', function () {
-          const {lgJWT, lgPlayer} = this
-          return this.invoke(['-r'], this.notify, {lgJWT, lgPlayer}).then(() => {
+          const {lgJWT, lgUser} = this
+          return this.invoke(['-r'], this.notify, {lgJWT, lgUser}).then(() => {
             expect(this.notifications[0]).to.match(/this is the question body/i)
             expect(this.notifications[0]).to.match(/this is the second question body/i)
             expect(this.notifications[0]).to.not.match(/these are the instructions/i)
@@ -92,16 +92,16 @@ describe(testContext(__filename), function () {
         })
 
         it('prints survey instructions', function () {
-          const {lgJWT, lgPlayer} = this
-          return this.invoke(['-r'], this.notify, {lgJWT, lgPlayer}).then(() => {
+          const {lgJWT, lgUser} = this
+          return this.invoke(['-r'], this.notify, {lgJWT, lgUser}).then(() => {
             expect(this.notifications[0]).to.match(/To log a reflection,/i)
             expect(this.notifications[0]).to.match(/Then follow the instructions specified in the question to answer./i)
           })
         })
 
         it('prints status information', function () {
-          const {lgJWT, lgPlayer} = this
-          return this.invoke(['-r'], this.notify, {lgJWT, lgPlayer}).then(() => {
+          const {lgJWT, lgUser} = this
+          return this.invoke(['-r'], this.notify, {lgJWT, lgUser}).then(() => {
             expect(this.notifications[0]).to.match(/You have logged 1\/2/i)
           })
         })
@@ -146,8 +146,8 @@ describe(testContext(__filename), function () {
         })
 
         it('prints a "completed" message', function () {
-          const {lgJWT, lgPlayer} = this
-          return this.invoke(['-r'], this.notify, {lgJWT, lgPlayer}).then(() => {
+          const {lgJWT, lgUser} = this
+          return this.invoke(['-r'], this.notify, {lgJWT, lgUser}).then(() => {
             expect(this.notifications[0]).to.match(/You've completed 100%/i)
           })
         })
@@ -173,8 +173,8 @@ describe(testContext(__filename), function () {
           }
         }})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(['-rq', '1'], this.notify, {lgJWT, lgPlayer}).then(() => {
+      const {lgJWT, lgUser} = this
+      return this.invoke(['-rq', '1'], this.notify, {lgJWT, lgUser}).then(() => {
         expect(this.notifications[0]).to.match(/this is the question body/i)
         expect(this.notifications[0]).to.match(/these are the instructions/i)
       })
@@ -185,8 +185,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/reflection\s*logged/i)
         })
@@ -197,8 +197,8 @@ describe(testContext(__filename), function () {
         .post('/graphql')
         .reply(200, {data: {createdIds: ['00000000-1111-2222-3333-444444444444']}})
 
-      const {lgJWT, lgPlayer} = this
-      return this.invoke(this.argv, this.notify, {lgJWT, lgPlayer})
+      const {lgJWT, lgUser} = this
+      return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications.length).to.equal(1)
           done()

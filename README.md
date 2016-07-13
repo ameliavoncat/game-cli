@@ -45,9 +45,6 @@ It's worth noting that the attributes are an extension of [cliclopts][cliclopts]
         lgUser: {
           // ... LG user attributes
         },
-        lgPlayer: {
-          // ... LG player attributes
-        }
       }
 
       vote.invoke(['44', '45'], console.log, options)
@@ -74,15 +71,6 @@ The command runner expects a `~/.lgrc` file to be present with attributes that w
     "roles" : [
        "player"
     ]
-  },
-  "lgPlayer" : {
-    "id" : "00000000-1111-2222-3333-444444444444",
-    "chapter" : {
-       "name" : "Chapter Name",
-       "channelName" : "chapter-name",
-       "timezone" : "America/Los_Angeles",
-       "goalRepositoryURL" : "https://github.com/GuildCraftsTesting/web-development-js-testing"
-    }
   }
 }
 ```

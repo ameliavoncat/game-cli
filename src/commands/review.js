@@ -3,6 +3,7 @@ import composeInvoke from '../util/composeInvoke'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
 import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
+import {userIsPlayer} from '../util/userValidation'
 
 const questionNames = ['completeness', 'quality']
 
@@ -10,7 +11,7 @@ export const {parse, usage, commandDescriptor} = loadCommand('review')
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   const {
     lgJWT,
-    lgPlayer,
+    lgUser,
     formatError,
     formatMessage,
   } = options
@@ -19,22 +20,22 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     error: err => notify(formatError(err)),
   }
 
-  if (!lgJWT || !lgPlayer || !lgPlayer.id) {
+  if (!lgJWT || !userIsPlayer(lgUser)) {
     return Promise.reject('You are not a player in the game.')
   }
   if (isResponseCommand(args)) {
     return handleProjectReview(lgJWT, args, notifyCallbacks)
-      .catch(error => {
-        errorReporter.captureException(error)
-        notify(formatError(error.message || error))
+      .catch(err => {
+        errorReporter.captureException(err)
+        notify(formatError(err.message || err))
       })
   }
 
   if (isStatusCommand(args)) {
     return handleProjectReviewStatus(lgJWT, args, notifyCallbacks)
-      .catch(error => {
-        errorReporter.captureException(error)
-        notify(formatError(error.message || error))
+      .catch(err => {
+        errorReporter.captureException(err)
+        notify(formatError(err.message || err))
       })
   }
 
@@ -149,4 +150,3 @@ function projectReviewStatusMessage(projectName, status) {
 
   return statusMessage
 }
-
