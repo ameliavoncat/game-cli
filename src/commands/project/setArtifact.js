@@ -1,6 +1,7 @@
 import getServiceBaseURL, {GAME} from '../../util/getServiceBaseURL'
 import errorReporter from '../../util/errorReporter'
 import graphQLFetcher from '../../util/graphQLFetcher'
+import {userIsPlayer} from '../../util/userValidation'
 
 function invokeSetProjectArtifactURLAPI(lgJWT, projectName, url) {
   const mutation = {
@@ -25,7 +26,7 @@ export function setProjectArtifactURL(args, notify, options) {
     formatError
   } = options
 
-  if (!lgJWT || !lgUser || lgUser.roles.indexOf('player') < 0) {
+  if (!lgJWT || !userIsPlayer(lgUser)) {
     return Promise.reject('You are not a player in the game.')
   }
   if (args._.length !== 2) {

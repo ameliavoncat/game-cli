@@ -1,5 +1,6 @@
 import loadCommand from '../../util/loadCommand'
 import composeInvoke from '../../util/composeInvoke'
+import {userIsPlayer} from '../../util/userValidation'
 import LogRetroCommand from './LogRetroCommand'
 
 export const {parse, usage, commandDescriptor} = loadCommand('log')
@@ -10,7 +11,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     formatError,
     formatMessage,
   } = options
-  if (!lgJWT || !lgUser || lgUser.roles.indexOf('player') < 0) {
+  if (!lgJWT || !userIsPlayer(lgUser)) {
     return Promise.reject('You are not a player in the game.')
   }
   if (args.retro && !Array.isArray(args.question)) {

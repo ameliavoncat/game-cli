@@ -3,6 +3,7 @@ import composeInvoke from '../util/composeInvoke'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
 import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
+import {userIsPlayer} from '../util/userValidation'
 
 const questionNames = ['completeness', 'quality']
 
@@ -19,7 +20,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     error: err => notify(formatError(err)),
   }
 
-  if (!lgJWT || !lgUser || lgUser.roles.indexOf('player') < 0) {
+  if (!lgJWT || !userIsPlayer(lgUser)) {
     return Promise.reject('You are not a player in the game.')
   }
   if (isResponseCommand(args)) {

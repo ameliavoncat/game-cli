@@ -3,6 +3,7 @@ import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import getServiceBaseURL, {GAME} from '../util/getServiceBaseURL'
 import composeInvoke from '../util/composeInvoke'
+import {userIsPlayer, userIsModerator} from '../util/userValidation'
 
 export const {parse, usage, commandDescriptor} = loadCommand('vote')
 
@@ -28,7 +29,7 @@ function voteForGoals(goalDescriptors, notify, options) {
     formatMessage,
     formatError
   } = options
-  if (!lgJWT || !lgUser || (lgUser.roles.indexOf('player') < 0 && lgUser.roles.indexOf('moderator') < 0)) {
+  if (!lgJWT || (!userIsPlayer(lgUser) && !userIsModerator(lgUser))) {
     return Promise.reject('You are not a player or a moderator in the game.')
   }
   if (goalDescriptors.length === 1) {
