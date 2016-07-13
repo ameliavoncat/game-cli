@@ -31,7 +31,7 @@ export default class LogRetroCommand {
           getRetrospectiveSurveyQuestion(questionNumber: $questionNumber, projectName: $projectName) {
             ... on SurveyQuestionInterface {
               id subjectType responseType body
-              responseIntructions
+              responseInstructions
             }
             ... on SinglePartSubjectSurveyQuestion {
               subject { id name handle }
@@ -57,7 +57,7 @@ export default class LogRetroCommand {
             questions {
               ... on SurveyQuestionInterface {
                 id subjectType responseType body
-                responseIntructions
+                responseInstructions
               }
               ... on SinglePartSubjectSurveyQuestion {
                 subject { id name handle }
@@ -78,8 +78,8 @@ export default class LogRetroCommand {
 
   formatQuestion(question, {questionNumber, skipInstructions}) {
     let questionText = `*Q${questionNumber}*: ${question.body}`
-    if (!skipInstructions && question.responseIntructions) {
-      questionText = `${questionText}\n\n${question.responseIntructions}`
+    if (!skipInstructions && question.responseInstructions) {
+      questionText = `${questionText}\n\n${question.responseInstructions}`
     }
     return questionText
   }

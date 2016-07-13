@@ -55,7 +55,7 @@ describe(testContext(__filename), function () {
                     id: '99ede319-882f-4dc8-81e2-be43f891a111',
                     subjectType: 'player',
                     responseType: 'text',
-                    responseIntructions: 'these are the instructions',
+                    responseInstructions: 'these are the instructions',
                     body: 'this is the question body',
                     subject: {
                       id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
@@ -68,7 +68,7 @@ describe(testContext(__filename), function () {
                     id: '99ede319-882f-4dc8-81e2-be43f891a122',
                     subjectType: 'player',
                     responseType: 'text',
-                    responseIntructions: 'these are the instructions',
+                    responseInstructions: 'these are the instructions',
                     body: 'this is the second question body',
                     subject: {
                       id: '34278883-2e76-42b6-a8aa-fa74a1892faa',
@@ -118,7 +118,7 @@ describe(testContext(__filename), function () {
                     id: '99ede319-882f-4dc8-81e2-be43f891a111',
                     subjectType: 'player',
                     responseType: 'text',
-                    responseIntructions: 'these are the instructions',
+                    responseInstructions: 'these are the instructions',
                     body: 'this is the question body',
                     subject: {
                       id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
@@ -131,7 +131,7 @@ describe(testContext(__filename), function () {
                     id: '99ede319-882f-4dc8-81e2-be43f891a122',
                     subjectType: 'player',
                     responseType: 'text',
-                    responseIntructions: 'these are the instructions',
+                    responseInstructions: 'these are the instructions',
                     body: 'this is the second question body',
                     subject: {
                       id: '34278883-2e76-42b6-a8aa-fa74a1892faa',
@@ -162,7 +162,7 @@ describe(testContext(__filename), function () {
             id: '99ede319-882f-4dc8-81e2-be43f891a1ba',
             subjectType: 'player',
             responseType: 'text',
-            responseIntructions: 'these are the instructions',
+            responseInstructions: 'these are the instructions',
             body: 'this is the question body',
             subject: {
               id: '34278883-2e76-42b6-a8aa-fa74a1892f90',
