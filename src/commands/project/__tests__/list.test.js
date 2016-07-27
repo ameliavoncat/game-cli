@@ -52,7 +52,7 @@ describe(testContext(__filename), function () {
 
     const _projectList = {
       data: {
-        getProjectsWithReviewResponsesForPlayer: [{
+        getProjectsAndReviewResponsesForPlayer: [{
           name: 'frightened-grouse',
           artifactURL: 'http://example.com',
           projectReviewResponses: [{
@@ -122,7 +122,7 @@ describe(testContext(__filename), function () {
           expect(this.notifications[0]).to.match(/Project\s+C\s+Q\s+Artifact/)
           expect(this.notifications[0]).to.match(/example\.com/)
           expect(this.notifications[0]).to.match(/23\s+88/)
-          _projectList.data.getProjectsWithReviewResponsesForPlayer.forEach(p => {
+          _projectList.data.getProjectsAndReviewResponsesForPlayer.forEach(p => {
             expect(this.notifications[0]).to.contain(p.name)
           })
           done()

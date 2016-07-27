@@ -9,7 +9,7 @@ function invokeProjectListWithReviewsAPI(lgJWT) {
   const query = {
     query: `
 query {
-  getProjectsWithReviewResponsesForPlayer {
+  getProjectsAndReviewResponsesForPlayer {
     name
     artifactURL
     projectReviewResponses {
@@ -21,7 +21,7 @@ query {
     `,
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(query)
-    .then(data => data.getProjectsWithReviewResponsesForPlayer)
+    .then(data => data.getProjectsAndReviewResponsesForPlayer)
 }
 
 function invokeProjectListSummaryAPI(lgJWT) {
