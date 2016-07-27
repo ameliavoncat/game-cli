@@ -1,5 +1,8 @@
 # History
 
+#### 1.1.0
+- add `/project list` subcommand
+
 #### 1.0.0
 - add `/retro` command
 - remove `/log` command
