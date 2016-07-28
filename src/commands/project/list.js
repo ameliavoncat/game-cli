@@ -39,14 +39,19 @@ query {
     .then(data => data.getProjectSummaryForPlayer)
 }
 
+const CHK_WIDTH = 1
+const PROJ_WIDTH = 21
+const CMPL_WIDTH = 3
+const QUAL_WIDTH = 3
+const ARTF_WIDTH = 40
 function formatProjectList(projects) {
   const numReviewed = projects.filter(proj => (
     proj.projectReviewResponses.filter(resp => resp.value).length > 0
   )).length
   const preface = `You have reviewed ${numReviewed} / ${projects.length} projects this cycle. Nice work!`
-  const fmt = '%-1s  %-21s  %-3s  %-3s  %s'
+  const fmt = `%-${CHK_WIDTH}s  %-${PROJ_WIDTH}s  %-${CMPL_WIDTH}s  %-${QUAL_WIDTH}s  %s`
   const header = sprintf(fmt, '', 'Project', 'C', 'Q', 'Artifact')
-  const underlines = sprintf(fmt, '', '---------------------', '---', '---', '----------------------------------------')
+  const underlines = sprintf(fmt, '', '-'.repeat(PROJ_WIDTH), '-'.repeat(CMPL_WIDTH), '-'.repeat(QUAL_WIDTH), '-'.repeat(ARTF_WIDTH))
   const projectLines = projects.map(proj => {
     const completeness = proj.projectReviewResponses.find(resp => resp.name === 'completeness').value
     const quality = proj.projectReviewResponses.find(resp => resp.name === 'quality').value
