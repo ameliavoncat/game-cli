@@ -59,7 +59,7 @@ function formatProjectList(projects) {
     return sprintf(fmt, reviewed, `#${proj.name}`, completeness || '', quality || '', proj.artifactURL || '')
   })
 
-  return `\`\`\`\n${preface}\n\n${header}\n${underlines}\n${projectLines.join('\n')}\n\`\`\``
+  return `${preface}\n\n\`\`\`\n${header}\n${underlines}\n${projectLines.join('\n')}\n\`\`\``
 }
 
 export function listProjects(args, notify, options) {
