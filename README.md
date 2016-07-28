@@ -1,5 +1,9 @@
 # game-cli
 
+[![Code Climate GPA](https://codeclimate.com/repos/579a59533f9350008b001b86/badges/204a213385078563eb5d/gpa.svg)](https://codeclimate.com/repos/579a59533f9350008b001b86/feed)
+[![Code Climate Issue Count](https://codeclimate.com/repos/579a59533f9350008b001b86/badges/204a213385078563eb5d/issue_count.svg)](https://codeclimate.com/repos/579a59533f9350008b001b86/feed)
+[![Test Coverage](https://codeclimate.com/repos/579a59533f9350008b001b86/badges/204a213385078563eb5d/coverage.svg)](https://codeclimate.com/repos/579a59533f9350008b001b86/coverage)
+
 Learners Guild game command-line interface (CLI).
 
 
