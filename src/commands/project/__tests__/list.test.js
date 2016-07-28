@@ -96,7 +96,7 @@ describe(testContext(__filename), function () {
       }
     }
 
-    it('displays summary information when no options are passed', function (done) {
+    it('displays summary information when no options are passed', function () {
       nock('http://game.learnersguild.test')
         .post('/graphql')
         .reply(200, _summaryData)
@@ -105,12 +105,10 @@ describe(testContext(__filename), function () {
       return this.invoke([], this.notify, {lgJWT, lgUser})
         .then(() => {
           expect(this.notifications[0]).to.match(/4 active projects.*participated in 2 projects/)
-          done()
         })
-        .catch(err => done(err))
     })
 
-    it('displays the list of projects when `--in-review` is passed', function (done) {
+    it('displays the list of projects when `--in-review` is passed', function () {
       nock('http://game.learnersguild.test')
         .post('/graphql')
         .reply(200, _projectList)
@@ -125,9 +123,7 @@ describe(testContext(__filename), function () {
           _projectList.data.getProjectsAndReviewResponsesForPlayer.forEach(p => {
             expect(this.notifications[0]).to.contain(p.name)
           })
-          done()
         })
-        .catch(err => done(err))
     })
   })
 })
