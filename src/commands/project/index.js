@@ -2,6 +2,7 @@ import loadCommand from '../../util/loadCommand'
 import composeInvoke from '../../util/composeInvoke'
 
 import {setProjectArtifactURL} from './setArtifact'
+import {listProjects} from './list'
 
 export const {parse, usage, commandDescriptor} = loadCommand('project')
 
@@ -9,6 +10,7 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
   if (args._.length >= 1) {
     const subcommandFuncs = {
       'set-artifact': () => setProjectArtifactURL(args.$['set-artifact'], notify, options),
+      'list': () => listProjects(args.$.list, notify, options),
     }
     return subcommandFuncs[args._[0]]()
   }
