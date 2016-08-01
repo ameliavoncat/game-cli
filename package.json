@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/game-cli",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib",
   "scripts": {
@@ -8,9 +8,13 @@
     "prepublish": "npm test && npm run build",
     "2npm": "./node_modules/.bin/publish",
     "lint": "./node_modules/.bin/xo",
-    "test:run": "NODE_ENV=test ./node_modules/.bin/mocha --opts ./config/mocha.opts $(find . -path './**/__tests__/*.test.js' -not -path '*node_modules*')",
-    "test:watch": "npm run test -- --watch",
-    "test": "npm run lint && npm run test:run",
+    "test:cov": "npm run test:cov:run && npm run test:cov:send",
+    "test:cov:run": "NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha $(find . -path './**/__tests__/*.test.js' ! -ipath '*node_modules*')",
+    "test:cov:send": "./node_modules/.bin/codeclimate-test-reporter < ./coverage/lcov.info",
+    "test:run": "NODE_ENV=test ./node_modules/.bin/mocha $(find . -path './**/__tests__/*.test.js' ! -ipath '*node_modules*')",
+    "test:watch": "npm run test:run -- --watch",
+    "test:ci": "npm run db:create && npm run db:migrate:up && npm run lint && npm run test:cov",
+    "test": "npm run lint && npm run test:run --",
     "command": "npm run build && node ./lib/runner"
   },
   "keywords": [
@@ -35,12 +39,18 @@
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
-    "babel-cli": "^6.9.0",
+    "babel-cli": "^6.11.4",
+    "babel-core": "^6.11.4",
     "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-stage-2": "^6.5.0",
+    "babel-runtime": "^6.11.6",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
+    "codeclimate-test-reporter": "^0.3.3",
+    "glob": "^7.0.5",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^2.5.3",
     "nock": "^8.0.0",
     "publish": "^0.6.0",
