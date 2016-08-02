@@ -9,7 +9,7 @@
     "2npm": "./node_modules/.bin/publish",
     "lint": "./node_modules/.bin/xo",
     "test:cov": "npm run test:cov:run && npm run test:cov:send",
-    "test:cov:run": "NODE_ENV=test ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha $(find . -path './**/__tests__/*.test.js' ! -ipath '*node_modules*')",
+    "test:cov:run": "./node_modules/.bin/nyc --reporter=lcov npm run test:run",
     "test:cov:send": "./node_modules/.bin/codeclimate-test-reporter < ./coverage/lcov.info",
     "test:run": "NODE_ENV=test ./node_modules/.bin/mocha $(find . -path './**/__tests__/*.test.js' ! -ipath '*node_modules*')",
     "test:watch": "npm run test:run -- --watch",
@@ -49,10 +49,9 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "codeclimate-test-reporter": "^0.3.3",
-    "glob": "^7.0.5",
-    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^2.5.3",
     "nock": "^8.0.0",
+    "nyc": "^7.1.0",
     "publish": "^0.6.0",
     "xo": "^0.15.1"
   },
@@ -83,5 +82,15 @@
     "esnext": true,
     "space": true,
     "semicolon": false
+  },
+  "nyc": {
+    "all": true,
+    "exclude": [
+      "lib/"
+    ],
+    "require": [
+      "babel-core/register",
+      "babel-polyfill"
+    ]
   }
 }
