@@ -3,7 +3,7 @@ import {sprintf} from 'sprintf-js'
 import getServiceBaseURL, {GAME} from '../../util/getServiceBaseURL'
 import errorReporter from '../../util/errorReporter'
 import graphQLFetcher from '../../util/graphQLFetcher'
-import {userIsPlayer} from '../../util/userValidation'
+import {userIsPlayer, userIsModerator} from '../../util/userValidation'
 
 function invokeProjectListWithReviewsAPI(lgJWT) {
   const query = {
@@ -70,8 +70,8 @@ export function listProjects(args, notify, options) {
     formatError
   } = options
 
-  if (!lgJWT || !userIsPlayer(lgUser)) {
-    return Promise.reject('You are not a player in the game.')
+  if (!lgJWT || (!userIsModerator(lgUser) && !userIsPlayer(lgUser))) {
+    return Promise.reject('You are not a player or moderator in the game.')
   }
   if (args._.length > 0) {
     return Promise.reject(`Invalid command - wrong number of arguments (${args._.length} for 0). Try --help for usage.`)

@@ -1,5 +1,8 @@
 # History
 
+#### 1.1.5
+- allow moderators to issue project list subcommand
+
 #### 1.1.4
 - Fix bug when submitting a partial project review
 
