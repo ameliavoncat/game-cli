@@ -1,5 +1,8 @@
 # History
 
+#### 1.1.4
+- Fix bug when submitting a partial project review
+
 #### 1.1.0
 - add `/project list` subcommand
 
