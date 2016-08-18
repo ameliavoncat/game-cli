@@ -48,10 +48,12 @@ function isStatusCommand(args) {
 
 function handleProjectReview(lgJWT, args, {msg}) {
   const projectName = args._[0].replace('#', '')
-  const responses = questionNames.map(questionName => ({
-    questionName,
-    responseParams: [args[questionName]]
-  }))
+  const responses = questionNames
+    .filter(questionName => questionName in args)
+    .map(questionName => ({
+      questionName,
+      responseParams: [args[questionName]]
+    }))
 
   return invokeSaveProjectReviewCLISurveyResponsesAPI(lgJWT, projectName, responses)
     .then(() => invokeGetProjectReviewSurveyStatusAPI(lgJWT, projectName))
