@@ -1,0 +1,13 @@
+%YAML 1.2
+---
+command:
+  name: playbook
+  description: open playbook
+  usage: playbook [<search>]
+  examples:
+    -
+      example: 'playbook'
+      description: 'Open the playbook'
+    -
+      example: playbook stats
+      description: 'Search the playbook for "stats"'

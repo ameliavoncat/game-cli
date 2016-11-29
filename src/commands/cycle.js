@@ -36,7 +36,7 @@ function handleCycleInitCommand(notify, options) {
   }
 
   return invokeCreateCycleAPI(lgJWT)
-    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initialized. Let the voting commence...`)))
+    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initializing... stand by.`)))
     .catch(err => {
       errorReporter.captureException(err)
       notify(formatError(err.message || err))

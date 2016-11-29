@@ -1,5 +1,8 @@
 # History
 
+#### 1.2.0
+- Adding playbook command
+
 #### 1.1.5
 - allow moderators to issue project list subcommand
 
