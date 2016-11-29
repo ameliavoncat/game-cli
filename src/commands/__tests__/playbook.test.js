@@ -16,6 +16,8 @@ describe(testContext(__filename), function () {
       this.formatError = msg => `__FMT: ${msg}`
       this.lgJWT = 'not.a.real.token'
       this.lgUser = {roles: ['moderator']}
+
+      this.runCmd = (args = []) => this.invoke(args, this.notify, {lgJWT: this.lgJWT, lgUser: this.lgUser})
     })
 
     beforeEach(function () {
@@ -24,9 +26,15 @@ describe(testContext(__filename), function () {
     })
 
     it('notifies with the usage message when requested', notifiesWithUsageMessageForDashH)
-    it('notifies user on success', async function () {
-      await this.invoke(['init'], this.notify, {lgJWT: this.lgJWT, lgUser: this.lgUser})
+
+    it('notifies user', async function () {
+      await this.runCmd()
       expect(this.notifications[0]).to.match(/Opening Playbook/i)
+    })
+
+    it('notifies user when there are search params', async function () {
+      await this.runCmd(['search', 'param'])
+      expect(this.notifications[0]).to.match(/Searching Playbook/i)
     })
   })
 })

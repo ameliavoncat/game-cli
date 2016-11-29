@@ -8,6 +8,11 @@ export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
     formatMessage,
   } = options
 
-  notify(formatMessage('📖  Opening Playbook'))
+  if (args._.length > 0) {
+    notify(formatMessage('📖  Searching Playbook'))
+  } else {
+    notify(formatMessage('📖  Opening Playbook'))
+  }
+
   return Promise.resolve()
 })
