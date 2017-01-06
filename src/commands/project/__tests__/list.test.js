@@ -55,6 +55,11 @@ describe(testContext(__filename), function () {
         getProjectsAndReviewResponsesForPlayer: [{
           name: 'frightened-grouse',
           artifactURL: 'http://example.com',
+          goal: {
+            number: 12,
+            title: 'Develop some 4w350m3n355',
+            url: 'http://example.com',
+          },
           projectReviewResponses: [{
             name: 'quality',
             value: '88',
@@ -65,6 +70,11 @@ describe(testContext(__filename), function () {
         }, {
           name: 'helpless-rat',
           artifactURL: null,
+          goal: {
+            number: 12,
+            title: 'Develop some 4w350m3n355',
+            url: 'http://example.com',
+          },
           projectReviewResponses: [{
             name: 'quality',
             value: null,
@@ -75,6 +85,11 @@ describe(testContext(__filename), function () {
         }, {
           name: 'magnificent-galah',
           artifactURL: null,
+          goal: {
+            number: 13,
+            title: '1337 h4x0rz ftw',
+            url: 'http://example.com',
+          },
           projectReviewResponses: [{
             name: 'quality',
             value: null,
@@ -85,6 +100,11 @@ describe(testContext(__filename), function () {
         }, {
           name: 'ordinary-wapiti',
           artifactURL: null,
+          goal: {
+            number: 14,
+            title: 'b00m g035 th3 d4y',
+            url: 'http://example.com',
+          },
           projectReviewResponses: [{
             name: 'quality',
             value: null,
@@ -116,8 +136,9 @@ describe(testContext(__filename), function () {
       const {lgJWT, lgUser} = this
       return this.invoke(['-r'], this.notify, {lgJWT, lgUser})
         .then(() => {
+          console.log(this.notifications)
           expect(this.notifications[0]).to.match(/have reviewed 1 \/ 4 projects/)
-          expect(this.notifications[0]).to.match(/Project\s+C\s+Q\s+Artifact/)
+          expect(this.notifications[0]).to.match(/Project\s+C\s+Q\s+Goal\s\/\sArtifact/)
           expect(this.notifications[0]).to.match(/example\.com/)
           expect(this.notifications[0]).to.match(/23\s+88/)
           _projectList.data.getProjectsAndReviewResponsesForPlayer.forEach(p => {
