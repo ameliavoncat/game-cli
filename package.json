@@ -1,6 +1,6 @@
 {
   "name": "@learnersguild/game-cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Option parser for Learners Guild commands.",
   "main": "lib",
   "scripts": {

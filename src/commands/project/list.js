@@ -12,6 +12,11 @@ query {
   getProjectsAndReviewResponsesForPlayer {
     name
     artifactURL
+    goal {
+      number
+      title
+      url
+    }
     projectReviewResponses {
       name
       value
@@ -40,23 +45,27 @@ query {
 }
 
 const CHK_WIDTH = 1
-const PROJ_WIDTH = 21
+const PROJ_WIDTH = 22
 const CMPL_WIDTH = 3
 const QUAL_WIDTH = 3
-const ARTF_WIDTH = 40
+const ARGL_WIDTH = 40
 function formatProjectList(projects) {
   const numReviewed = projects.filter(proj => (
     proj.projectReviewResponses.filter(resp => resp.value).length > 0
   )).length
   const preface = `You have reviewed ${numReviewed} / ${projects.length} projects this cycle. Nice work!`
   const fmt = `%-${CHK_WIDTH}s  %-${PROJ_WIDTH}s  %-${CMPL_WIDTH}s  %-${QUAL_WIDTH}s  %s`
-  const header = sprintf(fmt, '', 'Project', 'C', 'Q', 'Artifact')
-  const underlines = sprintf(fmt, '', '-'.repeat(PROJ_WIDTH), '-'.repeat(CMPL_WIDTH), '-'.repeat(QUAL_WIDTH), '-'.repeat(ARTF_WIDTH))
+  const header = sprintf(fmt, '', 'Project', 'C', 'Q', 'Goal / Artifact')
+  const underlines = sprintf(fmt, '', '-'.repeat(PROJ_WIDTH), '-'.repeat(CMPL_WIDTH), '-'.repeat(QUAL_WIDTH), '-'.repeat(ARGL_WIDTH))
   const projectLines = projects.map(proj => {
     const completeness = proj.projectReviewResponses.find(resp => resp.name === 'completeness').value
     const quality = proj.projectReviewResponses.find(resp => resp.name === 'quality').value
     const reviewed = completeness && quality ? '✓' : '-'
-    return sprintf(fmt, reviewed, `#${proj.name}`, completeness || '', quality || '', proj.artifactURL || '')
+    const goalInfo = `${proj.goal.number}: ${proj.goal.title}`
+    return [
+      sprintf(fmt, reviewed, `#${proj.name}`, completeness || '', quality || '', goalInfo),
+      sprintf(fmt, '', '', '', '', proj.artifactURL || ''),
+    ].join('\n') + (proj.artifactURL ? '\n' : '')
   })
 
   return `${preface}\n\n\`\`\`\n${header}\n${underlines}\n${projectLines.join('\n')}\n\`\`\``
