@@ -16,10 +16,10 @@ function invokeUpdateCycleStateAPI(state, lgJWT) {
     .then(data => data.updateCycleState)
 }
 
-function invokeCreateCycleAPI(lgJWT, scopedBillableHours) {
+function invokeCreateCycleAPI(lgJWT, projectDefaultExpectedHours) {
   const mutation = {
-    query: 'mutation($scopedBillableHours: Int) { createCycle(scopedBillableHours: $scopedBillableHours) { id cycleNumber scopedBillableHours } }',
-    variables: {scopedBillableHours},
+    query: 'mutation($projectDefaultExpectedHours: Int) { createCycle(projectDefaultExpectedHours: $projectDefaultExpectedHours) { id cycleNumber projectDefaultExpectedHours } }',
+    variables: {projectDefaultExpectedHours},
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
     .then(data => data.createCycle)
@@ -36,7 +36,7 @@ function handleCycleInitCommand(args, notify, options) {
     return Promise.reject('You are not a moderator.')
   }
 
-  const hoursInfo = args.hours ? `with ${args.hours} hours ` : ''
+  const hoursInfo = args.hours ? `with ${args.hours} expected hours per project ` : ''
 
   return invokeCreateCycleAPI(lgJWT, args.hours)
     .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initializing ${hoursInfo}... stand by.`)))

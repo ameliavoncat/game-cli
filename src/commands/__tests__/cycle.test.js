@@ -70,7 +70,7 @@ describe(testContext(__filename), function () {
         const {lgJWT, lgUser} = this
         return this.invoke(['init', '--hours=32'], this.notify, {lgJWT, lgUser})
           .then(() => {
-            expect(this.notifications[0]).to.match(/Cycle #4.*with 32 hours/i)
+            expect(this.notifications[0]).to.match(/Cycle #4.*with 32 expected hours/i)
           })
       })
       it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['init']))
