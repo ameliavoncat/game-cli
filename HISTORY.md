@@ -1,5 +1,8 @@
 # History
 
+#### 1.3.0
+- Add `--hours` option for `cycle init`.
+
 #### 1.2.0
 - Adding playbook command
 
