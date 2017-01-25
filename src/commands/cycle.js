@@ -16,15 +16,16 @@ function invokeUpdateCycleStateAPI(state, lgJWT) {
     .then(data => data.updateCycleState)
 }
 
-function invokeCreateCycleAPI(lgJWT) {
+function invokeCreateCycleAPI(lgJWT, scopedBillableHours) {
   const mutation = {
-    query: 'mutation { createCycle { id cycleNumber } }',
+    query: 'mutation($scopedBillableHours: Int) { createCycle(scopedBillableHours: $scopedBillableHours) { id cycleNumber scopedBillableHours } }',
+    variables: {scopedBillableHours},
   }
   return graphQLFetcher(lgJWT, getServiceBaseURL(GAME))(mutation)
     .then(data => data.createCycle)
 }
 
-function handleCycleInitCommand(notify, options) {
+function handleCycleInitCommand(args, notify, options) {
   const {
     lgJWT,
     lgUser,
@@ -35,8 +36,10 @@ function handleCycleInitCommand(notify, options) {
     return Promise.reject('You are not a moderator.')
   }
 
-  return invokeCreateCycleAPI(lgJWT)
-    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initializing... stand by.`)))
+  const hoursInfo = args.hours ? `with ${args.hours} hours ` : ''
+
+  return invokeCreateCycleAPI(lgJWT, args.hours)
+    .then(cycle => notify(formatMessage(`Cycle #${cycle.cycleNumber} Initializing ${hoursInfo}... stand by.`)))
     .catch(err => {
       errorReporter.captureException(err)
       notify(formatError(err.message || err))
@@ -62,9 +65,9 @@ function handleUpdateCycleStateCommand(state, statusMsg, notify, options) {
 }
 
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
-  if (args._.length === 1) {
+  if (args._.length >= 1) {
     const subcommandFuncs = {
-      init: () => handleCycleInitCommand(notify, options),
+      init: () => handleCycleInitCommand(args.$.init, notify, options),
       launch: () => handleUpdateCycleStateCommand('PRACTICE', '🚀  Initiating Launch... stand by.', notify, options),
       reflect: () => handleUpdateCycleStateCommand('REFLECTION', '🤔  Initiating Reflection... stand by.', notify, options),
     }

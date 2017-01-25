@@ -47,15 +47,30 @@ describe(testContext(__filename), function () {
     })
 
     describe('cycle init', function () {
+      beforeEach(function () {
+        nock.cleanAll()
+      })
+
       it('notifies user on success', function () {
         nock('http://game.learnersguild.test')
           .post('/graphql')
-          .reply(200, {data: {createCycle: {cycleNumber: 3}}})
+          .reply(200, {data: {createCycle: {cycleNumber: 3, hours: 40}}})
 
         const {lgJWT, lgUser} = this
         return this.invoke(['init'], this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(/Cycle #3/i)
+          })
+      })
+      it('confirms the number of hours when passed', function () {
+        nock('http://game.learnersguild.test')
+          .post('/graphql')
+          .reply(200, {data: {createCycle: {cycleNumber: 4, hours: 32}}})
+
+        const {lgJWT, lgUser} = this
+        return this.invoke(['init', '--hours=32'], this.notify, {lgJWT, lgUser})
+          .then(() => {
+            expect(this.notifications[0]).to.match(/Cycle #4.*with 32 hours/i)
           })
       })
       it('notifies of API invocation errors', notifiesWithErrorForAPIErrors(['init']))
