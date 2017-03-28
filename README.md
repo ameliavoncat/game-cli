@@ -11,9 +11,17 @@ Learners Guild game command-line interface (CLI).
 
 Read the [instructions for contributing](./CONTRIBUTING.md).
 
-1. Clone the repository.
+1. **Globally** install [nvm][nvm], [avn][avn], and [avn-nvm][avn-nvm].
 
-2. Run the setup tasks:
+    ```bash
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+    npm install -g avn avn-nvm
+    avn setup
+    ```
+
+2. Clone the repository.
+
+3. Run the setup tasks:
 
         $ npm install
         $ npm test
@@ -91,3 +99,6 @@ See the [LICENSE](./LICENSE) file.
 
 [subcli]: https://github.com/LearnersGuild/subcli
 [cliclopts]: https://github.com/finnp/cliclopts
+[nvm]: https://github.com/creationix/nvm
+[avn]: https://github.com/wbyoung/avn
+[avn-nvm]: https://github.com/wbyoung/avn-nvm
