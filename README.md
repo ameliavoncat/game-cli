@@ -50,7 +50,7 @@ It's worth noting that the attributes are an extension of [cliclopts][cliclopts]
 2. Use whichever command modules you want by importing them
 
       ```javascript
-      import {cycle, vote} from '@learnersguild/game-cli'
+      import {vote} from '@learnersguild/game-cli'
 
       const options = {
         lgJWT: '<LG user SSO JWT token>',
@@ -59,7 +59,14 @@ It's worth noting that the attributes are an extension of [cliclopts][cliclopts]
         },
       }
 
-      vote.invoke(['44', '45'], console.log, options)
+      const args = vote.parse(['44', '45'], options)
+      const usageText = vote.usage(args, options)
+      if (usageText) {
+        console.info(usageText)
+        return 1
+      }
+
+      // ... do something with args to make voting happen
       ```
 
 ### The Command Runner
