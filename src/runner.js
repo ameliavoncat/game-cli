@@ -28,7 +28,7 @@ function invokeCommandAPI(command, text, options) {
   return fetch(apiURL, {
     method: 'POST',
     headers: {
-      'Authorization': `JWT ${options.lgJWT}`,
+      'Authorization': `Bearer ${options.lgJWT}`,
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json',
     },
@@ -41,8 +41,7 @@ function invokeCommandAPI(command, text, options) {
             console.info(result)
             return 0
           }
-          console.error(`ERROR invoking ${apiURL}: ${resp.status} ${resp.statusText}`)
-          throw new Error(result)
+          throw new Error((result.error || {}).message || result)
         })
         .catch(err => {
           console.error(`ERROR invoking ${apiURL}: ${resp.status} ${resp.statusText}`)
@@ -66,7 +65,7 @@ if (!module.parent) {
   run(argv)
     .then(statusCode => process.exit(statusCode))
     .catch(err => {
-      console.error(err.stack || err)
+      console.error(err.stack || err.message || err)
       process.exit(-1)
     })
 }
