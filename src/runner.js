@@ -1,5 +1,7 @@
 import path from 'path'
 import fs from 'fs'
+import fetch from 'isomorphic-fetch'
+import encodeAsForm from 'form-urlencoded'
 
 const LGRC_FILENAME = path.join(process.env.HOME, '.lgrc')
 
@@ -15,27 +17,56 @@ function getUserOptions() {
   }
 }
 
+function invokeCommandAPI(command, text, options) {
+  process.env.APP_BASE_URL = process.env.NODE_ENV === 'production' ? 'https://game.learnersguild.org' : 'http://game.learnersguild.dev'
+
+  const body = encodeAsForm({
+    command: `/${command}`,
+    text,
+  })
+  const apiURL = `${process.env.APP_BASE_URL}/command`
+  return fetch(apiURL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `JWT ${options.lgJWT}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+    },
+    body,
+  })
+    .then(resp => {
+      return resp.json()
+        .then(result => {
+          if (resp.ok) {
+            console.info(result)
+            return 0
+          }
+          console.error(`ERROR invoking ${apiURL}: ${resp.status} ${resp.statusText}`)
+          throw new Error(result)
+        })
+        .catch(err => {
+          console.error(`ERROR invoking ${apiURL}: ${resp.status} ${resp.statusText}`)
+          throw err
+        })
+    })
+}
+
 function run(commandAndArgv) {
-  process.env.APP_BASE_URL = 'https://game-cli.learnersguild.org'
   const options = Object.assign({}, getUserOptions(), {maxWidth: process.stdout.columns})
   if (!options) {
-    console.error(`*** Error: No Learners Guild RC file found in ${LGRC_FILENAME} -- try creating one.`)
-    return Promise.resolve(1)
+    throw new Error(`*** Error: No Learners Guild RC file found in ${LGRC_FILENAME} -- try creating one.`)
   }
   const [commandName, ...argv] = commandAndArgv
-  const command = require('./')[commandName]
-
-  if (!command) {
-    console.error(`*** Error: No such command: ${commandName}`)
-    return Promise.resolve(1)
-  }
-  return command.invoke(argv, console.log, options)
+  return invokeCommandAPI(commandName, argv.join(' '), options)
 }
 
 if (!module.parent) {
   /* eslint-disable xo/no-process-exit */
   const argv = process.argv.slice(2)
   run(argv)
-    .then(exitCode => process.exit(exitCode))
-    .catch(err => console.error(err.stack))
+    .then(statusCode => process.exit(statusCode))
+    .catch(err => {
+      console.error(err.stack || err)
+      process.exit(-1)
+    })
 }
