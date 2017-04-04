@@ -5,7 +5,7 @@ import errorReporter from '../util/errorReporter'
 import graphQLFetcher from '../util/graphQLFetcher'
 import {userIsPlayer} from '../util/userValidation'
 
-const questionNames = ['completeness', 'quality']
+const questionNames = ['completeness']
 
 export const {parse, usage, commandDescriptor} = loadCommand('review')
 export const invoke = composeInvoke(parse, usage, (args, notify, options) => {
@@ -48,12 +48,10 @@ function isStatusCommand(args) {
 
 function handleProjectReview(lgJWT, args, {msg}) {
   const projectName = args._[0].replace('#', '')
-  const responses = questionNames
-    .filter(questionName => questionName in args)
-    .map(questionName => ({
-      questionName,
-      responseParams: [args[questionName]]
-    }))
+  const responses = [{
+    questionName: 'completeness',
+    responseParams: [args._[1]],
+  }]
 
   return invokeSaveProjectReviewCLISurveyResponsesAPI(lgJWT, projectName, responses)
     .then(() => invokeGetProjectReviewSurveyStatusAPI(lgJWT, projectName))
@@ -77,12 +75,8 @@ mutation($projectName: String!, $responses: [CLINamedSurveyResponse]!) {
 
 function projectReviewRecordedSuccessMessage(projectName, args, completed) {
   let msg = ''
-  if (args.completeness && args.quality) {
-    msg += `Completeness and quality scores captured for #${projectName}!`
-  } else if (args.completeness) {
+  if (args._[1]) {
     msg += `Completeness score captured for #${projectName}!`
-  } else if (args.quality) {
-    msg += `Quality score captured for #${projectName}!`
   }
 
   if (completed) {
@@ -94,7 +88,7 @@ function projectReviewRecordedSuccessMessage(projectName, args, completed) {
 }
 
 function isResponseCommand(args) {
-  return Boolean(questionNames.find(name => args[name]))
+  return Boolean(typeof args._[1] === 'number')
 }
 
 function handleProjectReviewStatus(lgJWT, args, {msg}) {

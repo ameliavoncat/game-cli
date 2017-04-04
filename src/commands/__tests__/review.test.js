@@ -21,7 +21,7 @@ describe(testContext(__filename), function () {
         this.notifications.push(msg)
       }
       this.formatError = msg => `__FMT: ${msg}`
-      this.argv = ['#some-project', '--completeness', '89', '--quality', '93']
+      this.argv = ['#some-project', '93']
       this.lgJWT = 'not.a.real.token'
       this.lgUser = {id: 'not.a.real.id', roles: ['player']}
     })
@@ -66,12 +66,11 @@ describe(testContext(__filename), function () {
         return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(/completeness:\s+`8`/i)
-            expect(this.notifications[0]).to.match(/quality:\s+N\/A/i)
             expect(this.notifications[0]).to.match(/artifact\.example\.com/)
           })
       })
 
-      it("displays a message about a missing artifactURL if it's missing", function () {
+      it('displays a message about a missing artifactURL if it\'s missing', function () {
         nock('http://game.learnersguild.test')
           .post('/graphql')
           .reply(200, {data: {getProjectReviewSurveyStatus: {
@@ -97,7 +96,7 @@ describe(testContext(__filename), function () {
             completed: true,
             responses: [
               {questionName: 'completeness', values: [{value: 8}]},
-              {questionName: 'quality', values: [{value: 9}]},
+              // {questionName: 'quality', values: [{value: 9}]},
             ]
           }}})
 
@@ -105,7 +104,6 @@ describe(testContext(__filename), function () {
         return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).to.match(/completeness:\s+`8`/i)
-            expect(this.notifications[0]).to.match(/quality:\s+`9`/i)
             expect(this.notifications[0]).to.not.match(/artifact\.example\.com/)
           })
       })
@@ -123,18 +121,16 @@ describe(testContext(__filename), function () {
         return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
           .then(() => {
             expect(this.notifications[0]).not.to.match(/completeness:/i)
-            expect(this.notifications[0]).not.to.match(/quality:/i)
             expect(this.notifications[0]).to.match(/artifact\.example\.com/)
           })
       })
     })
 
-    it('notifies that completeness and quality have been recorded', function () {
+    it('notifies that project completeness has been recorded', function () {
       nock('http://game.learnersguild.test')
         .post('/graphql')
         .reply(200, {data: {saveProjectReviewCLISurveyResponses: {createdIds: [
           '00000000-1111-2222-3333-444444444444',
-          '55555555-6666-7777-8888-999999999999',
         ]}}})
       nock('http://game.learnersguild.test')
         .post('/graphql')
@@ -143,41 +139,14 @@ describe(testContext(__filename), function () {
           completed: true,
           responses: [
             {questionName: 'completeness', values: [{value: 8}]},
-            {questionName: 'quality', values: [{value: 9}]},
           ]
         }}})
 
       const {lgJWT, lgUser} = this
       return this.invoke(this.argv, this.notify, {lgJWT, lgUser})
         .then(() => {
-          expect(this.notifications[0]).to.match(/completeness and quality scores captured/i)
+          expect(this.notifications[0]).to.match(/Completeness score captured/i)
         })
-    })
-
-    const scoreNames = ['quality', 'completeness']
-    scoreNames.forEach(function (scoreName) {
-      it(`notifies that ${scoreName} has been recorded`, function () {
-        nock('http://game.learnersguild.test')
-          .post('/graphql')
-          .reply(200, {data: {createdIds: [
-            '00000000-1111-2222-3333-444444444444',
-          ]}})
-        nock('http://game.learnersguild.test')
-          .post('/graphql')
-          .reply(200, {data: {getProjectReviewSurveyStatus: {
-            project: {artifactURL: 'http://artifact.example.com'},
-            completed: false,
-            responses: [
-              {questionName: scoreName, values: [{value: 89}]},
-            ]
-          }}})
-
-        const {lgJWT, lgUser} = this
-        return this.invoke(['#some-project', `--${scoreName}`, '89'], this.notify, {lgJWT, lgUser})
-          .then(() => {
-            expect(this.notifications[0]).to.match(new RegExp(`${scoreName} score captured`, 'i'))
-          })
-      })
     })
   })
 })
