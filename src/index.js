@@ -25,5 +25,4 @@ function genCommandMap() {
 }
 
 const commandMap = genCommandMap()
-console.log({commandMap})
 export default commandMap

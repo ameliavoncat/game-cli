@@ -41,7 +41,7 @@ function invokeCommandAPI(command, text, options) {
           if (resp.ok) {
             return result
           }
-          throw new Error((result.error || {}).message || result)
+          throw new Error(result.text || result)
         })
         .catch(err => {
           console.error(`ERROR invoking ${apiURL}: ${resp.status} ${resp.statusText}`)
@@ -59,12 +59,22 @@ function run(commandAndArgv) {
   return invokeCommandAPI(commandName, argv.join(' '), options)
 }
 
+function printResult(result) {
+  if (!result.text) {
+    console.info(util.inspect(result, {depth: 4}))
+    return
+  }
+  console.info(result.text)
+  const attachmentTexts = (result.attachments || []).map(attachment => attachment.text)
+  console.info('-> ', attachmentTexts.join('\n-> '))
+}
+
 if (!module.parent) {
   /* eslint-disable xo/no-process-exit */
   const argv = process.argv.slice(2)
   run(argv)
     .then(result => {
-      console.info(util.inspect(result, {depth: 4}))
+      printResult(result)
       process.exit(0)
     })
     .catch(err => {
