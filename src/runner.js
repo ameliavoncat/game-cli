@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import util from 'util'
 import fetch from 'isomorphic-fetch'
 import encodeAsForm from 'form-urlencoded'
 
@@ -38,8 +39,7 @@ function invokeCommandAPI(command, text, options) {
       return resp.json()
         .then(result => {
           if (resp.ok) {
-            console.info(result)
-            return 0
+            return result
           }
           throw new Error((result.error || {}).message || result)
         })
@@ -63,7 +63,10 @@ if (!module.parent) {
   /* eslint-disable xo/no-process-exit */
   const argv = process.argv.slice(2)
   run(argv)
-    .then(statusCode => process.exit(statusCode))
+    .then(result => {
+      console.info(util.inspect(result, {depth: 4}))
+      process.exit(0)
+    })
     .catch(err => {
       console.error(err.stack || err.message || err)
       process.exit(-1)
